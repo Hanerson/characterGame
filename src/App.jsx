@@ -1,11 +1,16 @@
-import { TexiusiBBS } from './components/TexiusiBBS';
+import {Routes, Route, HashRouter} from 'react-router-dom';
+import Home from './components/official/Home';
+import { TexiusiBBS } from './components/Texiusi/TexiusiBBS';
 
-function App() {
-  return (
-      <div className="w-screen h-screen bg-[#3a6ea5] p-6 overflow-auto">
-        <TexiusiBBS />
-      </div>
-  );
-}
+const App = () => {
+    return (
+        <HashRouter>
+            <Routes>
+                <Route path="/" element={<Home/>} />
+                <Route path="/dep" element={<TexiusiBBS />} />
+            </Routes>
+        </HashRouter>
+    );
+};
 
 export default App;

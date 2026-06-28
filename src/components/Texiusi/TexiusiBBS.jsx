@@ -1,6 +1,6 @@
 // src/components/TexiusiBBS.jsx
 import { useState } from 'react';
-import { initialPosts } from '../data/forumData';
+import { initialPosts } from '../../data/forumData.js';
 
 export const TexiusiBBS = () => {
     const [posts] = useState(initialPosts);
