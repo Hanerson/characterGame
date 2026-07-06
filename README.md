@@ -1,16 +1,120 @@
-# React + Vite
+# ⛵ 忒修斯之船 (Ships of Theseus)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> *"若所有木板皆已被替换，愿此处的文字仍是你的锚点。"*
 
-Currently, two official plugins are available:
+一个基于 React + Vite 构建的实验性叙事项目。表面上是至诚大学编译原理课程网站，实际上是一个关于人格连续性、记忆本质与存在主义的交互式环境叙事体验。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🎭 项目概念
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+这不是一个普通的网站。这是一个**沙盒认知模拟实验**。
 
-## Expanding the ESLint configuration
+- **表面层**：2010年代风格的大学课程门户网站，提供编译原理课程资料
+- **中间层**：一个从2001年运行至今的匿名哲学BBS，26位"参与者"讨论忒修斯之船悖论
+- **深层真相**：所有26位参与者是同一个意识（u_0001）在26个不同认知退化阶段的人格快照——但他们彼此不知
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+所有故事通过**环境叙事**呈现：页面源代码注释、系统错误信息、数据库查询结果、404页面文案等。没有人直接告诉你真相——你需要在不同页面之间穿梭，拼凑碎片。
+
+---
+
+## 🚀 启动项目
+
+```bash
+npm install
+npm run dev
+```
+
+浏览器访问 `http://localhost:5173`
+
+---
+
+## 🗺️ 路由结构
+
+| 路由 | 页面 | 说明 |
+|------|------|------|
+| `/` | 桌面门户 | Windows XP 风格桌面，所有入口的起点 |
+| `/course` | 编译原理课程主页 | 至诚大学CS304课程（页面数据存在异常） |
+| `/course/resources` | 教学资源库 | 文件下载站——多数文件是虚拟索引 |
+| `/course/faculty` | 师资队伍 | 含林远离职记录——他是论坛管理员 |
+| `/dep` | TexiusiShip BBS | 匿名哲学论坛——环境叙事的核心 |
+| `/system/logs` | 系统诊断控制台 | 隐藏的系统日志——揭示实验细节 |
+| `/system/console` | 管理员控制台 | 最深层——需要绕过认证才能进入 |
+| `/*` | 404 | 错误页面也包含叙事碎片 |
+
+---
+
+## 🏗️ 技术架构
+
+```
+ships-of-theseus/
+├── index.html              # 入口HTML（含隐藏签名）
+├── src/
+│   ├── main.jsx            # React 入口
+│   ├── App.jsx             # 路由配置
+│   ├── index.css           # 2010年代复古全局样式
+│   ├── components/
+│   │   ├── desktop/
+│   │   │   └── Desktop.jsx # Windows XP 风格桌面 + 任务栏
+│   │   ├── official/
+│   │   │   ├── Home.jsx            # 课程主页
+│   │   │   ├── CourseResources.jsx # 资源库
+│   │   │   └── FacultyPage.jsx     # 师资页
+│   │   ├── Texiusi/
+│   │   │   └── TexiusiBBS.jsx      # 匿名论坛
+│   │   └── system/
+│   │       ├── SystemLogs.jsx      # 系统诊断控制台
+│   │       └── AdminConsole.jsx    # 管理员面板
+│   └── data/
+│       ├── forumData.js    # 论坛帖子数据（25年跨度的叙事）
+│       ├── mockData.js     # 课程数据（含环境线索）
+│       └── storyData.js    # 环境叙事碎片（系统日志等）
+```
+
+### 核心技术特点
+
+- **纯前端模拟后端**：所有"服务器响应"、"数据库查询"、"文件下载失败"均为前端模拟
+- **环境叙事**：故事通过错误消息、页面注释、隐藏文本、系统日志等非直接方式呈现
+- **2010年代UI**：Windows Classic/XP风格，宋体字体，凸起/凹陷边框，访问计数器，跑马灯
+- **前后深度**：从桌面→课程→论坛→系统日志→管理控制台，五个信息层级逐步揭示真相
+
+---
+
+## 📖 环境叙事设计
+
+### 关键线索分布
+
+1. **课程主页**：课程名称出现"？"乱码，公告时间线异常地长，所有IP指向同一地址
+2. **教学资源**：所有文件下载失败——它们只存在于数据库索引中
+3. **师资队伍**：林远老师2001年"离职"，但其创建的进程至今运行
+4. **论坛BBS**：26个匿名账号的句法树被NLP分析证实为同一人
+5. **系统日志**：显示 local_mind.db 只有1条用户记录和26个别名
+6. **管理控制台**：完整揭示"忒修斯协议"实验——你（访客）是第27个会话
+
+### 清道夫 (Sweeper Daemon)
+
+实验内存在一个自动守护进程，负责删除任何"打破第四面墙"的推论——确保参与者永远无法认知到彼此为同一人。在交互中，这表现为所有"写入"操作都被拒绝。
+
+---
+
+## 🎨 设计风格
+
+- **色彩**：淡蓝底色 (#d8e4f8)、深蓝标题 (#003399)、灰色边框 (#c0c0c0)
+- **字体**：宋体 (SimSun) 为主、Courier New 用于代码/日志
+- **控件**：Windows Classic 风格凸起/凹陷按钮、状态栏、工具栏
+- **动画**：Blink（闪烁标签）、跑马灯通知、打字机效果
+- **图标**：Emoji 作为图标替代（符合2010年代中文网站习惯）
+
+---
+
+## 📝 开发说明
+
+- 构建工具：Vite 8.x
+- UI 框架：React 19.x
+- 路由：React Router 7.x (Hash 模式)
+- 样式：TailwindCSS 4.x + 自定义 2010 年代 CSS
+- 无后端：纯前端项目，所有"后端"行为均为模拟
+
+---
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
