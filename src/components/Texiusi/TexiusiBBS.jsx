@@ -1,6 +1,5 @@
 // src/components/TexiusiBBS.jsx
-// 忒修斯之船匿名论坛 — 2010年代复古BBS风格
-// 环境叙事核心：所有参与者是同一人的26个人格碎片，但无人知晓
+// 忒修斯之船匿名论坛
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -38,7 +37,7 @@ export const TexiusiBBS = () => {
         icon.textContent = customMessage ? '⚠️' : '❌';
 
         const msg = document.createElement('pre');
-        msg.textContent = customMessage || `操作失败: ${actionName}\n\n服务器错误 (HTTP 500)\nInternal Server Error\n\n错误详情：\n- 数据库写入被拒绝 (Append-Only 模式)\n- 当前访问的是只读存档快照\n- 所有交互功能已被禁用\n\n时间戳: ${new Date().toISOString().replace('T', ' ').slice(0, 19)}\n会话ID: guest_anonymous@210.28.128.4\n\n提示: local_mind.db 自 2001-11-01 起运行在只追加模式。写入操作需要 PID 1 的授权——但 PID 1 已经 25 年没有响应任何请求了。`;
+        msg.textContent = customMessage || `操作失败: ${actionName}\n\n服务器错误 (HTTP 500)\nInternal Server Error\n\n错误详情：\n- 数据库写入被拒绝 (Append-Only 模式)\n- 当前访问的是只读存档快照\n\n时间戳: ${new Date().toISOString().replace('T', ' ').slice(0, 19)}\n会话ID: guest_anonymous@210.28.128.4`;
         msg.style.cssText = 'margin:0;font-family:Tahoma,sans-serif;font-size:12px;white-space:pre-wrap;color:#000;line-height:1.6;';
 
         content.appendChild(icon);
@@ -79,7 +78,7 @@ export const TexiusiBBS = () => {
         }
     };
 
-    const handleNewPost = () => simulateServerError('发布新帖', '写入操作被拒绝。\n\nlocal_mind.db 处于只读归档模式。\n所有写入操作需要 PID 1 的授权。\n\n如果你认为这是一个错误，请联系系统管理员。\n——但管理员 (Anonymous_01 / PID 1) 在 2001 年 12 月 20 日后就没有回复过任何消息。');
+    const handleNewPost = () => simulateServerError('发布新帖', '写入操作被拒绝。\n\nlocal_mind.db 处于只读归档模式。');
 
     const filterByEpoch = (epoch) => {
         return posts.filter(p => p.epoch === epoch);
@@ -127,7 +126,6 @@ export const TexiusiBBS = () => {
             }}>
                 <strong>欢迎来到「忒修斯之船」匿名讨论区。</strong><br />
                 本站致力于探讨人格连续性、记忆本质及存在主义危机。所有发言均以匿名形式呈现。<br />
-                我们不记录你的名字，只记录你的思想。若所有木板皆已被替换，愿此处的文字仍是你的锚点。<br />
                 <span style={{ color: '#666', fontSize: '10px', marginTop: '4px', display: 'block' }}>
                     注意：当前访问的是2026年存档快照。数据库运行在 Append-Only 模式。所有写入操作已禁用。
                     <br />
@@ -140,7 +138,7 @@ export const TexiusiBBS = () => {
                 <button onClick={handleNewPost} disabled={isLoading}>
                     📝 发布新帖
                 </button>
-                <button onClick={() => simulateServerError('搜索', '搜索功能需要全文索引支持。\n\nlocal_mind.db 的全文索引在 2011 年被清道夫 (sweeper_daemon) 意外清空。\n搜索功能自此不可用。\n\n——或者说，有人不希望你能搜索到某些内容。')}>
+                <button onClick={() => simulateServerError('搜索', '搜索功能需要全文索引支持。\n\nlocal_mind.db 的全文索引不可用。')}>
                     🔍 搜索
                 </button>
                 <span style={{ marginLeft: 'auto', fontSize: '10px', color: '#808080' }}>
@@ -418,13 +416,13 @@ export const TexiusiBBS = () => {
                         paddingBottom: '12px',
                         borderBottom: '1px solid #d0d0d0',
                     }}>
-                        <button onClick={() => simulateServerError('点赞', '点赞数据写入失败。\n\nlocal_mind.db 处于只读模式。\n即使能写入——你真的是在对"别人"的帖子点赞吗？')}
+                        <button onClick={() => simulateServerError('点赞', '点赞数据写入失败。\n\nlocal_mind.db 处于只读模式。')}
                             disabled={isLoading}>👍 点赞</button>
-                        <button onClick={() => simulateServerError('评论', '评论提交失败。\n\nHTTP 500 — 数据库写入被拒绝。\n\n你可以尝试继续发言，但系统不会记录。\n就像这个论坛里那些被清道夫删除的帖子一样——\n你说了，但没人（包括未来的你）会记得。')}
+                        <button onClick={() => simulateServerError('评论', '评论提交失败。\n\nHTTP 500 — 数据库写入被拒绝。')}
                             disabled={isLoading}>💬 评论</button>
-                        <button onClick={() => simulateServerError('分享', '分享链接生成失败。\n\n该论坛没有外部网络连接。所有用户都在 210.28.128.4。\n你不能把链接发给"别人"——因为根本没有别人。')}
+                        <button onClick={() => simulateServerError('分享', '分享链接生成失败。\n\n该论坛没有外部网络连接。所有用户都在 210.28.128.4。')}
                             disabled={isLoading}>🔗 分享</button>
-                        <button onClick={() => simulateServerError('举报', '举报功能不可用。\n\n没有版主。没有管理员。\n唯一的 "管理员" (Anonymous_01) 在 PID 1 中沉睡。\n没有人来处理举报——因为没有人是"别人"。')}
+                        <button onClick={() => simulateServerError('举报', '举报功能不可用。')}
                             disabled={isLoading} style={{ marginLeft: 'auto' }}>🚩 举报</button>
                     </div>
 
@@ -449,10 +447,6 @@ export const TexiusiBBS = () => {
                                 fontSize: '12px',
                             }}>
                                 暂无评论。
-                                <br />
-                                <span style={{ fontSize: '10px', color: '#c0c0c0' }}>
-                                    （或者评论已被清道夫删除。）
-                                </span>
                             </div>
                         ) : (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -485,7 +479,7 @@ export const TexiusiBBS = () => {
                                                 href="#"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    simulateServerError('回复', '回复功能不可用。\n\n即使能回复——你确定你要回复的那个人还在吗？\n你确定那个"人"不是你自己的另一个别名吗？');
+                                                    simulateServerError('回复', '回复功能不可用。');
                                                 }}
                                                 style={{ fontSize: '11px', color: '#0000cc' }}
                                             >
@@ -532,7 +526,7 @@ export const TexiusiBBS = () => {
                             }}
                         />
                         <div style={{ marginTop: '6px', fontSize: '10px', color: '#808080' }}>
-                            ⚠ 所有写入操作已被禁用。你只能阅读——就像这个论坛里的所有"其他人"一样。
+                            ⚠ 所有写入操作已被禁用。
                         </div>
                     </div>
                 </div>

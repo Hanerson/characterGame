@@ -1,6 +1,5 @@
 // src/components/official/Home.jsx
 // 至诚大学 · 编译原理课程主页
-// 2010年代大学课程网站风格 — 纯前端模拟后端
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -170,7 +169,6 @@ const Home = () => {
                                             marginLeft: '8px',
                                             fontStyle: 'italic',
                                         }}>
-                                            {/* 课程名称的状态标记 */}
                                             [名称自动修复中...]
                                         </span>
                                     </h2>
@@ -332,7 +330,7 @@ const Home = () => {
                                     color: '#808080',
                                 }}>
                                     显示最近15条公告 · 共{announcements.length}条 ·
-                                    <a href="#" onClick={e => { e.preventDefault(); window.showSystemDialog?.('error', '数据库错误', '无法加载更多公告。\n\n数据库连接超时。\nlocal_mind.db 响应时间: > 5000ms\n\n可能原因：当前有大量并发写入操作（26个活跃会话正在竞争同一数据库锁）。'); }} style={{ marginLeft: '4px' }}>
+                                    <a href="#" onClick={e => { e.preventDefault(); window.showSystemDialog?.('error', '数据库错误', '无法加载更多公告。\n\n数据库连接超时。\nlocal_mind.db 响应时间: > 5000ms'); }} style={{ marginLeft: '4px' }}>
                                         加载更多...
                                     </a>
                                 </div>
@@ -446,10 +444,10 @@ const Home = () => {
                                                                     `无法下载 "${r.title}"。\n\nHTTP 403 - Forbidden\n\n该文档包含底层数据库架构信息。访问此文件需要直接操作 local_mind.db 的权限。\n\n提示：该数据库当前处于只读归档模式。`);
                                                             } else if (r.status === 'corrupted') {
                                                                 window.showSystemDialog?.('error', '文件损坏',
-                                                                    `无法打开 "${r.title}"。\n\n文件头损坏 (Magic number mismatch)。\n读取到: 0x53574545504552 ("SWEEPER")\n预期: 0x454C46 ("ELF")\n\n该文件可能已被垃圾回收守护进程 (sweeper_daemon) 误清理。\n请联系系统管理员恢复数据——尽管管理员已经25年没有回复了。`);
+                                                                    `无法打开 "${r.title}"。\n\n文件头损坏 (Magic number mismatch)。\n读取到: 0x53574545504552 ("SWEEPER")\n预期: 0x454C46 ("ELF")\n\n该文件可能已被垃圾回收守护进程 (sweeper_daemon) 误清理。`);
                                                             } else {
                                                                 window.showSystemDialog?.('info', '下载准备中',
-                                                                    `准备下载 "${r.title}"...\n\n文件大小: ${r.size}\n格式: ${r.format}\n\n正在从本地数据库检索文件...\n\n错误: 文件索引存在于数据库中，但对应的二进制数据块在 local_mind.db 中未找到。\n该文件可能是一个"幽灵条目"——数据库中存在记录，但物理存储从未被分配。\n\n这是我们在此类系统中常见的数据异常。\n——系统日志，自动生成`);
+                                                                    `准备下载 "${r.title}"...\n\n文件大小: ${r.size}\n格式: ${r.format}\n\n正在从本地数据库检索文件...\n\n错误: 文件索引存在于数据库中，但对应的二进制数据块在 local_mind.db 中未找到。`);
                                                             }
                                                         }}
                                                     >
@@ -523,7 +521,7 @@ const Home = () => {
                                                                 onClick={(e) => {
                                                                     e.preventDefault();
                                                                     window.showSystemDialog?.('info', `实验: ${lab.name}`,
-                                                                        `${lab.description}\n\n截止日期: ${lab.deadline}\n状态: ${deadlinePassed ? '已截止（但系统仍接受提交——因为时间在这个数据库中不是线性的）' : '进行中'}\n\n所有实验提交将被写入 local_mind.db 的 assignments 表中。\n注意：该表与论坛帖子表共享同一个存储引擎。`);
+                                                                        `${lab.description}\n\n截止日期: ${lab.deadline}\n\n所有实验提交将被写入 local_mind.db 的 assignments 表中。`);
                                                                 }}
                                                             >
                                                                 {lab.name}
@@ -572,10 +570,6 @@ const Home = () => {
                         <span className="dim">{'\n  - Records: 1 user, 26 aliases, 47.3MB'}</span>
                         <span className="dim">{'\n  - Uptime: 9023 days (since 2001-11-01 00:00:01)'}</span>
                         <span className="dim">{'\n  - Active sessions: 26 (all sharing PID namespace)'}</span>
-                        <span className="warn">{'\n\n  WARNING: This page is a read-only archive snapshot.'}</span>
-                        <span className="warn">{'\n  All interactive features are simulated.'}</span>
-                        <span className="warn">{'\n  The server is not real. The database is not real.'}</span>
-                        <span className="warn">{'\n  But the story is.'}</span>
                         <span className="dim">{'\n\n-->'}</span>
                     </div>
                 )}
@@ -591,7 +585,7 @@ const Home = () => {
                     <span style={{ fontSize: '11px', color: '#808080' }}>
                         💡 提示：你可以在桌面双击图标来访问不同页面。双击桌面空白处返回。
                         <br />
-                        某些功能隐藏在"开始菜单→所有程序"中。但不是所有程序都真的存在。
+                        某些功能隐藏在"开始菜单→所有程序"中。
                         <br />
                         <Link to="/" style={{ fontSize: '11px', color: '#003399' }}>
                             🖥️ 返回桌面

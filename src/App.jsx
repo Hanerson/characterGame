@@ -1,6 +1,4 @@
 // src/App.jsx
-// 忒修斯之船 — 路由配置
-// 所有页面以2010年代风格呈现，环境叙事贯穿始终
 
 import { Routes, Route, HashRouter } from 'react-router-dom';
 import Desktop from './components/desktop/Desktop';
@@ -26,18 +24,18 @@ const App = () => {
                 {/* 忒修斯之船匿名论坛（隐藏入口） */}
                 <Route path="/dep" element={<TexiusiBBS />} />
 
-                {/* 隐藏系统页面 — 揭示真相的深度层级 */}
+                {/* 系统页面 */}
                 <Route path="/system/logs" element={<SystemLogs />} />
                 <Route path="/system/console" element={<AdminConsole />} />
 
-                {/* 404 — 任何未匹配路由 */}
+                {/* 404 — 未匹配路由 */}
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </HashRouter>
     );
 };
 
-// 404 页面 — 带有环境叙事的错误页面
+// 404 页面
 const NotFoundPage = () => {
     return (
         <div style={{
@@ -81,9 +79,7 @@ const NotFoundPage = () => {
                             borderTop: '1px dashed #ccc',
                             paddingTop: '12px',
                         }}>
-                            "这个网站中的许多页面只存在于索引中——它们看起来像真实页面，
-                            <br />但在你点击之前，没有人知道它们是否真的存在。
-                            <br />有点像这个实验本身。"
+                            "这个网站中的许多页面只存在于索引中。"
                             <br />——管理员备注，2001年
                         </p>
                     </div>

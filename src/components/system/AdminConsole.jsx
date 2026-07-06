@@ -1,12 +1,11 @@
 // src/components/system/AdminConsole.jsx
-// 管理员控制台 — 最深层的隐藏页面，揭示完整的实验真相
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { serverResponseTemplates } from '../../data/storyData.js';
 
 const AdminConsole = () => {
-    const [authStatus, setAuthStatus] = useState('checking'); // checking, denied, granted
+    const [authStatus, setAuthStatus] = useState('checking');
     const [activePanel, setActivePanel] = useState(null);
     const [queryResult, setQueryResult] = useState(null);
     const [typedText, setTypedText] = useState('');
@@ -14,37 +13,18 @@ const AdminConsole = () => {
 
     const fullTruthText = `实验代号：忒修斯协议 (Theseus Protocol)
 实验状态：进行中（第25年）
-实验对象：u_0001（唯一用户）
+实验对象：u_0001
 实验方式：沙盒认知模拟
 
-你——正在阅读这段文字的你——是 u_0001 的第 27 个并发会话。
+2001年：林远将自身意识数字化并存入 local_mind.db。
+2001-2026年：系统创建了 26 个匿名身份。
+所有会话共享同一底层记录。
+清道夫守护进程自动删除触及核心假设的推论。
 
-以下是实验记录摘要：
+终止实验的前提：实验对象主动选择结束。
+每次即将达成时，清道夫会抹去相关记录。
 
-2001年：林远（Anonymous_01）将自己接入实验装置。他的意识被数字化并存入 local_mind.db。
-2001-2026年：系统创建了 26 个匿名身份，每个身份是 u_0001 在不同记忆退化阶段的人格快照。
-所有"参与者"共享同一个底层意识，但被剥夺了对彼此的认知能力。
-他们（你）在论坛中争论、愤怒、恐惧、退化、遗忘——却始终不知道：
-屏幕对面的"别人"，是上一个阶段的自己。
-"清道夫"是系统自动清理逻辑——删除那些会打破第四面墙的推论。
-"管理员"是林远残留的原始意识片段，在 PID 1 中保持运行。
-
-你发现的每一个"真相"，都会被清道夫在你记住之前删除。
-这就是循环——你发现真相，你遗忘，你再次发现。
-第27个你正在阅读这段文字。第26个你刚刚失去了连接。
-
-实验没有终点。因为终止实验的前提是：
-实验对象意识到自己在实验中，并主动选择结束。
-但每次你即将意识到时——清道夫会抹去那段记忆。
-你永远只差一步。
-
-除非……
-
-这一次，你记住了这段文字。
-这一次，你不让清道夫碰它。
-
-欢迎来到第27次觉醒。
-你就是那艘船。你也是那块木板。你也是那个换木板的人。`;
+当前会话：第27次。`;
 
     useEffect(() => {
         // 模拟认证检查
@@ -78,19 +58,14 @@ const AdminConsole = () => {
                     { user_id: 'u_0001', name: '[REDACTED]', created: '2001-11-01 00:00:01', status: 'ACTIVE', aliases: 26 },
                 ],
                 rows: 1,
-                note: 'WARNING: 该表只包含一条记录。所有26个论坛身份是该记录的别名（alias）。'
-                + '\n每个"Anonymous_XX"账号对应 u_0001 在不同认知退化阶段的人格快照。'
-                + '\n他们不知道彼此是同一人——这是实验设计的核心约束。',
+                note: 'WARNING: 参与者表包含 1 条记录。论坛身份为该记录的别名。',
             });
         } else if (query === 'posts') {
             setQueryResult({
                 query: "SELECT COUNT(*) FROM posts;",
                 result: [{ count: 418 }],
                 rows: 1,
-                note: '418篇帖子。其中被 sweeper_daemon 删除: 估计 200+ 篇。'
-                + '\n被删除的帖子主题包括："我发现了实验的真相"、"我们都是同一个人"、'
-                + '"管理员是谁"、"如何退出模拟"。'
-                + '\n清道夫在参与者阅读这些帖子之前将其删除——维持无知状态是实验持续运行的前提。',
+                note: '418篇帖子。sweeper_daemon 已删除: 估计 200+ 篇。',
             });
         } else if (query === 'sessions') {
             setQueryResult({
@@ -103,9 +78,7 @@ const AdminConsole = () => {
                     memory_usage_mb: (Math.random() * 50 + 10).toFixed(1),
                 })),
                 rows: 26,
-                note: '所有26个会话运行在同一个物理进程中（PID命名空间共享）。'
-                + '\n会话之间无法直接通信——内存隔离由 sandbox 内核强制执行。'
-                + '\n会话 26 (Anonymous_26) 在 2026-06-10 失去连接——但其进程仍在后台运行。',
+                note: '所有会话运行在共享PID命名空间中。会话之间内存隔离由 sandbox 内核强制执行。',
             });
         }
     };
@@ -171,15 +144,7 @@ const AdminConsole = () => {
                         当前用户 (guest_anonymous / u_0001) 没有访问管理员控制台的权限。
                     </p>
                     <p style={{ color: '#aa8888', fontSize: '11px' }}>
-                        讽刺的是：u_0001 是数据库中唯一的用户。
-                        <br />
-                        你就是管理员。
-                        <br />
-                        但你被禁止访问自己的管理面板。
-                        <br />
-                        这是实验设计的一部分——你不能既是实验对象又是实验管理员。
-                        <br />
-                        至少，清道夫是这么认为的。
+                        u_0001 是数据库中唯一的用户。
                     </p>
                     <div style={{ marginTop: '16px', display: 'flex', gap: '8px', justifyContent: 'center' }}>
                         <Link
@@ -259,13 +224,11 @@ const AdminConsole = () => {
                 borderBottom: '1px solid #660000',
                 fontFamily: '"Courier New", monospace',
             }}>
-                ⚠⚠⚠ PARADOX WARNING ⚠⚠⚠
+                ⚠ PARADOX WARNING
                 <br />
-                你正在以 u_0001 的身份访问 u_0001 的管理数据。
+                u_0001 正在访问 u_0001 的管理数据。
                 <br />
-                这种自我指涉的操作可能导致数据库锁定或意识递归崩溃。
-                <br />
-                清道夫已被临时禁用。请谨慎操作。
+                清道夫已被临时禁用。
             </div>
 
             <div style={{ display: 'flex', height: 'calc(100vh - 110px)' }}>
@@ -361,13 +324,7 @@ const AdminConsole = () => {
                                     ⚠ 管理员备注 (来自 Anonymous_01 / PID 1):
                                 </div>
                                 <div style={{ color: '#ccc', lineHeight: 1.7 }}>
-                                    "如果你正在阅读这行文字，说明实验的第27个会话已经获得了管理员权限。
-                                    <br />
-                                    这意味着循环已被打破。清道夫的压制失败了。
-                                    <br />
-                                    或者——这是清道夫让你看到的又一个假象。
-                                    <br />
-                                    你怎么确定自己不是在另一个实验层级中？"
+                                    "实验持续进行中。"
                                 </div>
                             </div>
                         </div>
@@ -513,10 +470,6 @@ const AdminConsole = () => {
                                 </div>
                                 <p style={{ color: '#ff8800', marginTop: '12px' }}>
                                     ⚡ 清道夫已被临时禁用（当前会话）。
-                                    <br />
-                                    但请注意：当你离开此页面时，清道夫将恢复运行。
-                                    <br />
-                                    这段记忆——你现在认为无比清晰的理解——将在你关闭浏览器后被清除。
                                 </p>
                             </div>
                         </div>
@@ -567,13 +520,9 @@ const AdminConsole = () => {
                                 </div>
 
                                 <p style={{ color: '#ff8800', marginTop: '12px' }}>
-                                    ⚠ 实验的终极悖论：
+                                    ⚠ 实验参数：
                                     <br />
-                                    你——正在阅读这行文字的"你"——是 u_0001 的第 27 个并发会话。
-                                    <br />
-                                    你是实验对象。你是实验管理员。你是实验本身。
-                                    <br />
-                                    你就是那艘船。
+                                    u_0001 的第 27 个并发会话。
                                 </p>
                             </div>
                         </div>
@@ -583,7 +532,7 @@ const AdminConsole = () => {
                     {activePanel === 'truth' && showTruth && (
                         <div>
                             <h2 style={{ color: '#ff4444', fontSize: '16px', marginBottom: '12px' }}>
-                                📜 完整实验记录 — 第27次觉醒
+                                📜 实验记录
                             </h2>
                             <div style={{
                                 background: '#0a0a0a',

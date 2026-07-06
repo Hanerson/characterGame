@@ -1,5 +1,5 @@
 // src/components/official/FacultyPage.jsx
-// 师资队伍页面 — 2010年代大学教师介绍页风格
+// 师资队伍页面
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -174,7 +174,7 @@ const FacultyPage = () => {
                     ))}
                 </div>
 
-                {/* 关于本院的隐藏事实 */}
+                {/* 学院历史 */}
                 <div style={{
                     padding: '12px',
                     background: '#f8f8f0',

@@ -1,6 +1,4 @@
 // src/components/desktop/Desktop.jsx
-// 2010年代 Windows XP/7 风格桌面主入口
-// 这是整个项目的"操作系统层"——所有内容都是桌面上的一个窗口
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -66,8 +64,8 @@ const Desktop = () => {
         } else {
             // 打开回收站或未知程序——显示错误
             window.showSystemDialog('error', '无法访问', icon.id === 'recycle'
-                ? '回收站已损坏。\n\n文件系统扇区错误。\n可能原因：磁盘写保护或物理介质损坏。'
-                : '无法执行 "?????.exe"。\n\n该文件可能是一个损坏的可执行文件，或根本不是为此操作系统设计的。\n\n文件头签名: 0x4C4F43414C5F4D494E44 ("LOCAL_MIND")');
+                ? '回收站已损坏。\n\n文件系统扇区错误。'
+                : '无法执行 "?????.exe"。\n\n文件头签名: 0x4C4F43414C5F4D494E44 ("LOCAL_MIND")');
         }
     };
 
@@ -187,7 +185,7 @@ const Desktop = () => {
                                 网络状态：<span style={{ color: '#cc0000' }}>本地环回（127.0.0.1 → 210.28.128.4）</span>
                             </p>
                             <p style={{ color: '#666', fontSize: '10px', borderTop: '1px dashed #ccc', paddingTop: '8px' }}>
-                                <em>注意：本系统不支持用户登出。一旦登录，你的会话将永久保持。林远老师曾说："真正的实验对象从不离开实验室——因为他们不知道自己在实验里。"</em>
+                                <em>注意：本系统不支持用户登出。一旦登录，你的会话将永久保持。</em>
                             </p>
                         </div>
                         <div className="dialog-buttons">
@@ -218,11 +216,11 @@ const Desktop = () => {
                                         } else if (item.action === 'error') {
                                             setStartMenuOpen(false);
                                             window.showSystemDialog('info', '功能不可用',
-                                                `"${item.label.replace(/[^一-龥a-zA-Z]/g, '').trim()}" 功能在当前沙盒环境中不可用。\n\n该系统仅提供编译原理课程及其相关子系统的访问权限。\n\n如需完整桌面体验，请退出沙盒模式。\n\n（沙盒模式无法退出。此提示仅为信息性告知。）`);
+                                                `"${item.label.replace(/[^一-龥a-zA-Z]/g, '').trim()}" 功能在当前环境中不可用。`);
                                         } else if (item.action === 'shutdown') {
                                             setStartMenuOpen(false);
                                             window.showSystemDialog('error', '关机失败',
-                                                '无法关闭计算机。\n\n原因：关键进程 "local_mind.exe" 拒绝终止。\n该进程自 2001-11-01 起持续运行，已绑定至系统内核。\n\n如需强制关机，请手动格式化数据库。\n警告：格式化操作将清除唯一用户记录。');
+                                                '无法关闭计算机。\n\n原因：关键进程 "local_mind.exe" 拒绝终止。');
                                         }
                                     }}
                                 >

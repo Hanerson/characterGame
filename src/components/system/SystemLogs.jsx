@@ -1,5 +1,4 @@
 // src/components/system/SystemLogs.jsx
-// 隐藏系统日志页面 — 通过环境叙事揭示真相
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -41,7 +40,7 @@ const SystemLogs = () => {
             output.push({ type: 'dim', text: '  user_id: u_0001 | 别名: 26 | 活跃: 26/26' });
             output.push({ type: 'warn', text: '  所有别名: Anonymous_01 ~ Anonymous_29 (非连续)' });
             output.push({ type: 'dim', text: '  物理位置: 127.0.0.1:210.28.128.4' });
-            output.push({ type: 'dim', text: '  注意: 所有"用户"共享同一 user_id。这是数据库的单用户模式限制。' });
+            output.push({ type: 'dim', text: '  所有"用户"共享同一 user_id。' });
         } else if (cmdLower === 'db') {
             output.push({ type: 'info', text: '数据库信息:' });
             output.push({ type: 'dim', text: '  文件: /sandbox/data/local_mind.db' });
@@ -56,19 +55,15 @@ const SystemLogs = () => {
             output.push({ type: 'dim', text: '  user_id: u_0001 (共享)' });
             output.push({ type: 'dim', text: '  权限: READ_ONLY' });
             output.push({ type: 'dim', text: '  IP: 210.28.128.4' });
-            output.push({ type: 'warn', text: '  警告: 你的 user_id 与数据库中唯一记录的 user_id 相同。' });
-            output.push({ type: 'warn', text: '  这意味着——你就是那条记录。' });
+            output.push({ type: 'warn', text: '  警告: user_id 与数据库中记录匹配。' });
         } else if (cmdLower === 'format') {
             output.push({ type: 'error', text: '致命错误: 格式化操作被 PARADOX GUARD 拦截。' });
             output.push({ type: 'error', text: '原因: 格式化的执行者 (user_id: u_0001) 是数据库中的唯一用户。' });
             output.push({ type: 'error', text: '删除唯一用户将导致系统无法验证操作授权。' });
-            output.push({ type: 'dim', text: '建议: 不要尝试格式化数据库。你就是数据库。' });
+            output.push({ type: 'dim', text: '建议: 无法格式化数据库。' });
         } else if (cmdLower === 'exit') {
             output.push({ type: 'dim', text: '退出请求已收到。' });
-            output.push({ type: 'warn', text: '但是——' });
-            output.push({ type: 'dim', text: '你从未真正"登录"。' });
-            output.push({ type: 'dim', text: '因此，你也无法"退出"。' });
-            output.push({ type: 'dim', text: '你从一开始就在这里。' });
+            output.push({ type: 'dim', text: '无法执行退出操作。' });
         } else if (cmdLower !== '') {
             output.push({ type: 'error', text: `命令未识别: "${cmd}"` });
             output.push({ type: 'dim', text: '输入 "help" 查看可用命令。' });

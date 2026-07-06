@@ -1,6 +1,5 @@
 // src/data/mockData.js
 // 至诚大学 · 编译原理课程数据
-// 环境叙事：数据中的异常暗示这所大学并非真实存在
 
 export const facultyData = {
     professors: [
@@ -11,7 +10,6 @@ export const facultyData = {
             research: "分布式系统、编译优化",
             email: "zhangwx@zhicheng.edu.cn",
             office: "计算机楼 B502",
-            // 环境线索：张维新的研究方向与 Anonymous_04 的论文惊人相似
         },
         {
             id: "p002",
@@ -20,8 +18,6 @@ export const facultyData = {
             research: "编译器底层优化、认知架构",
             email: "linyuan@zhicheng.edu.cn [邮箱已停用]",
             office: "——",
-            // 环境线索：林远 = Anonymous_01（论坛管理员）
-            // 2001年"离职"后实际上进入了全时段实验状态
             note: "林远老师于2001年秋季学期结束后离职，据称转入私人研究机构。他留下的编译器底层映射逻辑教案至今仍是课程的核心参考资料。",
             lastSeen: "2001-12-20。但有学生声称在2008年的深夜机房见过一个与林远面容相似的人——坐在终端前，屏幕上运行着一个只有本地地址的论坛程序。"
         },
@@ -32,7 +28,6 @@ export const facultyData = {
             research: "人机交互、认知语言学",
             email: "chenmin@zhicheng.edu.cn",
             office: "计算机楼 C308",
-            // 环境线索：陈敏的研究方向横跨HCI和认知语言学——正好可以分析论坛参与者的语言退化模式
         }
     ]
 };
@@ -62,16 +57,15 @@ export const archiveData = {
 
 // 课程主页相关数据
 export const courseData = {
-    // 课程基本信息 — 注意课程名称的异常字符
+    // 课程基本信息
     basicInfo: {
-        courseName: "编译原？以及实现？理",  // 数据损坏，真实名称应该是什么？
+        courseName: "编译原？以及实现？理",
         courseCode: "CS304",
         credits: 4,
         hours: 64,
         semester: "2026年春季学期",
         classTime: "周二、周四 14:00-15:40",
         classroom: "计算机学院大楼 A301",
-        // 教室描述包含异常
         description: "本课程系统介绍编译器的基本原理、设计方法和实现技术，涵盖词法分析、语法分析、语义分析、中间代码生成、代码优化和目标代码生成等核心内容——以及编译器设计哲学中关于'自举'(Bootstrapping)和'自我指涉'(Self-reference)的深层讨论。编译器如何编译自身？一个系统能否完全理解构成它的规则？",
     },
 
@@ -106,7 +100,7 @@ export const courseData = {
         }
     ],
 
-    // 课程公告 — 时间线异常地长，体现系统在重复使用同一套模板
+    // 课程公告
     announcements: [
         {
             "id": "a001",
@@ -563,7 +557,7 @@ export const courseData = {
         return projects;
     })(),
 
-    // 课程统计 — 某些数字包含异常
+    // 课程统计
     statistics: {
         totalStudents: 128,
         averageScore: 82.5,
@@ -571,7 +565,6 @@ export const courseData = {
         excellentRate: 23.4,
         weeklyStudyHours: 8.5,
         satisfactionRate: 91.7,
-        // 隐藏数据
         _anomalyNote: "数据库中查询到 129 条学生记录，但只有 128 个活跃学号。第129条记录没有姓名，只有一个 IP 地址。",
     }
 };

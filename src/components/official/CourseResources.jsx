@@ -1,5 +1,5 @@
 // src/components/official/CourseResources.jsx
-// 教学资源库 — 2010年代文件下载站风格
+// 教学资源库
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -15,16 +15,16 @@ const CourseResources = () => {
     const handleDownload = (resource) => {
         if (resource.status === 'locked') {
             window.showSystemDialog?.('error', '访问受限',
-                `无法下载 "${resource.title}"。\n\nHTTP 403 - Forbidden\n\n该资源需要 SYSTEM 级别访问权限。当前用户权限不足。\n\n提示：尝试以 Anonymous_01 身份登录。\n但 Anonymous_01 的密码已于 2001 年随林远老师一同"离职"。`);
+                `无法下载 "${resource.title}"。\n\nHTTP 403 - Forbidden\n\n该资源需要 SYSTEM 级别访问权限。当前用户权限不足。`);
         } else if (resource.status === 'forbidden') {
             window.showSystemDialog?.('error', '禁止访问',
-                `无法下载 "${resource.title}"。\n\n该文档包含底层数据库架构信息。\n\nlocal_mind.db 表结构:\n- table: participants (1 row, 26 aliases)\n- table: posts (405 rows, append-only)\n- table: sweeper_log (classified)\n\n访问此信息需要直接数据库查询权限。`);
+                `无法下载 "${resource.title}"。\n\n该文档包含底层数据库架构信息。\n\nlocal_mind.db 表结构:\n- table: participants (1 row, 26 aliases)\n- table: posts\n- table: sweeper_log\n\n访问此信息需要直接数据库查询权限。`);
         } else if (resource.status === 'corrupted') {
             window.showSystemDialog?.('error', '文件已损坏',
-                `"${resource.title}" 无法读取。\n\n磁盘扇区错误。文件可能已被 sweeper_daemon 作为孤儿数据清理。\n\nsweeper_daemon 是一个自动垃圾回收进程，定期清理"不再被任何参与者需要"的数据。\n它从不出错——但它判断"需要"的标准从未被公开。`);
+                `"${resource.title}" 无法读取。\n\n磁盘扇区错误。文件可能已被 sweeper_daemon 清理。`);
         } else {
             window.showSystemDialog?.('info', '下载失败',
-                `准备下载 "${resource.title}"...\n\n文件大小: ${resource.size}\n格式: ${resource.format}\n\n正在从 local_mind.db 检索二进制数据...\n\n错误: 数据库中存在该文件的索引条目，但对应的 BLOB 数据块为空（NULL）。\n\n这是一个已知问题：local_mind.db 中的许多文件索引是自动生成的"占位符"——\n它们看起来像真实文件，但从未被实际写入过。\n\n系统不知道如何区分真实文件与占位符。\n或许从一开始，它们就没有区别。`);
+                `准备下载 "${resource.title}"...\n\n文件大小: ${resource.size}\n格式: ${resource.format}\n\n正在从 local_mind.db 检索二进制数据...\n\n错误: 数据库中该文件的 BLOB 数据块为空（NULL）。`);
         }
     };
 
@@ -252,8 +252,6 @@ const CourseResources = () => {
                     <strong>📌 资源库说明：</strong>
                     本资源库中的所有文件索引存储在 local_mind.db 数据库中。
                     由于该数据库运行在 Append-Only 模式下，部分文件可能只存在索引而无实际数据。
-                    如遇到"文件不存在于物理存储中"的错误，说明对应的 BLOB 数据块在记录时未正确写入。
-                    此问题自2001年数据库初始化以来持续存在——或者说，从一开始，这些文件是否存在就是一个"忒修斯之船"式的命题。
                 </div>
             </main>
 
