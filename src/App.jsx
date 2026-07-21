@@ -8,6 +8,8 @@ import FacultyPage from './components/official/FacultyPage';
 import { TexiusiBBS } from './components/Texiusi/TexiusiBBS';
 import SystemLogs from './components/system/SystemLogs';
 import AdminConsole from './components/system/AdminConsole';
+import ArchiveHub from './components/archive/ArchiveHub';
+import DocumentViewer from './components/shared/DocumentViewer';
 
 const App = () => {
     return (
@@ -23,6 +25,10 @@ const App = () => {
 
                 {/* 忒修斯之船匿名论坛（隐藏入口） */}
                 <Route path="/dep" element={<TexiusiBBS />} />
+
+                {/* 忒修斯之船 · 考古计划 */}
+                <Route path="/archives" element={<ArchiveHub />} />
+                <Route path="/archives/:docId" element={<DocumentViewer />} />
 
                 {/* 系统页面 */}
                 <Route path="/system/logs" element={<SystemLogs />} />

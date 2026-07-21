@@ -608,6 +608,8 @@ const Home = () => {
                     <Link to="/course/resources">教学资源</Link>
                     <span>|</span>
                     <Link to="/system/logs">系统状态</Link>
+                    <span>|</span>
+                    <Link to="/archives/2003-teaching-evaluation" style={{ fontSize: '10px' }}>📄 2003评估</Link>
                 </div>
                 <div style={{ borderTop: '1px solid #ccc', paddingTop: '8px', color: '#808080' }}>
                     版权所有 © 2001-2026 至诚大学计算机学院 | 建议使用 IE6.0 以上浏览器，分辨率 1024×768 或更高

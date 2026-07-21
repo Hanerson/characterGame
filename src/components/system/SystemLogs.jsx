@@ -25,6 +25,7 @@ const SystemLogs = () => {
             output.push({ type: 'dim', text: '  users    - 查看在线用户' });
             output.push({ type: 'dim', text: '  db       - 查看数据库信息' });
             output.push({ type: 'dim', text: '  whoami   - 查看当前用户' });
+            output.push({ type: 'dim', text: '  leaks    - 查看数据泄漏 (需谨慎使用)' });
             output.push({ type: 'dim', text: '  exit     - 退出控制台' });
             output.push({ type: 'dim', text: '  format   - 格式化数据库 [需要确认]' });
         } else if (cmdLower === 'status') {
@@ -61,6 +62,30 @@ const SystemLogs = () => {
             output.push({ type: 'error', text: '原因: 格式化的执行者 (user_id: u_0001) 是数据库中的唯一用户。' });
             output.push({ type: 'error', text: '删除唯一用户将导致系统无法验证操作授权。' });
             output.push({ type: 'dim', text: '建议: 无法格式化数据库。' });
+        } else if (cmdLower === 'leaks') {
+            output.push({ type: 'warn', text: '╔══════════════════════════════════════╗' });
+            output.push({ type: 'warn', text: '║  ⚠ 警告：你正在访问数据泄漏记录    ║' });
+            output.push({ type: 'warn', text: '║  来源：仁济医院内部系统泄漏        ║' });
+            output.push({ type: 'warn', text: '╚══════════════════════════════════════╝' });
+            output.push({ type: 'info', text: '已恢复的医疗档案碎片：' });
+            output.push({ type: 'dim', text: '  [1] 1987-hospital-appointment — 仁济医院报到通知书' });
+            output.push({ type: 'dim', text: '  [2] 1995-mri-records          — MRI设备使用记录 (10次违规)' });
+            output.push({ type: 'dim', text: '  [3] 1995-counseling-record    — 谈话记录 · MRI违规约谈' });
+            output.push({ type: 'dim', text: '  [4] 1995-funding-rejection    — 课题申请 & 伦理驳回通知' });
+            output.push({ type: 'dim', text: '  [5] 2001-resignation          — 离职申请全套文件' });
+            output.push({ type: 'dim', text: '' });
+            output.push({ type: 'dim', text: '  查看方法: 输入 leaks view <编号> 或访问 /archives/<doc_id>' });
+            output.push({ type: 'dim', text: '  例如: leaks view 1' });
+        } else if (cmdLower.startsWith('leaks view')) {
+            const idx = parseInt(cmdLower.split(' ')[2]);
+            const docIds = ['1987-hospital-appointment', '1995-mri-records', '1995-counseling-record', '1995-funding-rejection', '2001-resignation'];
+            if (idx >= 1 && idx <= 5) {
+                output.push({ type: 'info', text: `正在打开: ${docIds[idx - 1]}` });
+                output.push({ type: 'dim', text: '重定向至: /archives/' + docIds[idx - 1] });
+                setTimeout(() => { window.location.hash = '#/archives/' + docIds[idx - 1]; }, 300);
+            } else {
+                output.push({ type: 'error', text: '无效的编号。有效范围: 1-5' });
+            }
         } else if (cmdLower === 'exit') {
             output.push({ type: 'dim', text: '退出请求已收到。' });
             output.push({ type: 'dim', text: '无法执行退出操作。' });

@@ -54,6 +54,7 @@ const Desktop = () => {
         { id: 'ie', label: 'Internet Explorer', icon: '🌐', path: '/dep', hidden: true },
         { id: 'sysinfo', label: '系统信息', icon: '🖥️', path: '/system/logs', hidden: true },
         { id: 'recycle', label: '回收站', icon: '🗑️', path: null },
+        { id: 'archive', label: '考古计划', icon: '📂', path: '/archives', hidden: true },
         { id: 'unknown', label: '?????.exe', icon: '⚠️', path: null },
     ];
 
@@ -281,6 +282,7 @@ const Desktop = () => {
                             {win === '/course/faculty' && '👥 师资队伍'}
                             {win === '/dep' && '🌐 TexiusiShip BBS'}
                             {win === '/system/logs' && '📋 系统日志'}
+                            {win === '/archives' && '📂 考古计划'}
                         </button>
                     ))}
                 </div>

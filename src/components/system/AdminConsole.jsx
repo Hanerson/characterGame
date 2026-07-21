@@ -80,6 +80,19 @@ const AdminConsole = () => {
                 rows: 26,
                 note: '所有会话运行在共享PID命名空间中。会话之间内存隔离由 sandbox 内核强制执行。',
             });
+        } else if (query === 'leaks') {
+            setQueryResult({
+                query: "SELECT * FROM leaked_documents WHERE subject='林远';",
+                result: [
+                    { doc_id: '1987-hospital-appointment', title: '仁济医院报到通知书', date: '1987-08-25', source: '人事处档案', status: 'RECOVERED' },
+                    { doc_id: '1995-mri-records', title: 'MRI设备使用记录 (1995)', date: '1995-01~12', source: '设备科日志', status: 'RECOVERED', note: '10次违规操作' },
+                    { doc_id: '1995-counseling-record', title: '谈话记录 · MRI违规使用', date: '1995-09-25', source: '人事处档案', status: 'RECOVERED' },
+                    { doc_id: '1995-funding-rejection', title: '科研课题申请 & 伦理驳回', date: '1995-11-28', source: '伦理委员会', status: 'RECOVERED' },
+                    { doc_id: '2001-resignation', title: '离职申请全套文件', date: '2001-12-10', source: '人事处档案', status: 'RECOVERED', note: '含科室主任未寄出的便条' },
+                ],
+                rows: 5,
+                note: 'WARNING: 以上数据来自医院内部系统泄露数据包。访问此信息可能违反相关法规。数据完整性: 基本完整。',
+            });
         }
     };
 

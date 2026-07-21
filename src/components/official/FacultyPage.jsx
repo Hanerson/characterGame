@@ -156,6 +156,26 @@ const FacultyPage = () => {
                                                             其NT账户显示为"已停用"，但该账户下的一个守护进程（PID: 1）仍在消耗CPU周期
                                                         </li>
                                                     </ul>
+                                                    <div style={{
+                                                        marginTop: '8px',
+                                                        padding: '6px 10px',
+                                                        background: '#fff8e0',
+                                                        borderLeft: '3px solid #cc8800',
+                                                    }}>
+                                                        <Link
+                                                            to="/archives/2001-university-interview"
+                                                            style={{ fontSize: '11px', color: '#cc0000' }}
+                                                        >
+                                                            📋 [查看面试记录 — 2001年8月]
+                                                        </Link>
+                                                        <span style={{ margin: '0 8px', color: '#ccc' }}>|</span>
+                                                        <Link
+                                                            to="/archives/2007-teaching-evaluation"
+                                                            style={{ fontSize: '11px', color: '#cc0000' }}
+                                                        >
+                                                            📄 [查看最终评估 — 2007年]
+                                                        </Link>
+                                                    </div>
                                                     <p style={{
                                                         color: '#808080',
                                                         fontStyle: 'italic',

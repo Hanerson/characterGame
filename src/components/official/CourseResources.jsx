@@ -137,6 +137,77 @@ const CourseResources = () => {
                         </div>
                     ))}
 
+                    {/* === 历史档案 (特殊分类) === */}
+                    <div
+                        style={{
+                            padding: '6px 12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            borderBottom: '1px dotted #d0d0d0',
+                            cursor: 'pointer',
+                            background: '#fff8e8',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = '#fff0d0'}
+                        onMouseLeave={e => e.currentTarget.style.background = '#fff8e8'}
+                        onClick={() => window.location.hash = '#/archives/2002-course-syllabus'}
+                    >
+                        <span style={{ width: '30px', fontSize: '16px' }}>📜</span>
+                        <span style={{ flex: 1 }}>2002_计算思维导论_课程大纲.txt</span>
+                        <span style={{ width: '100px', fontSize: '11px' }}>
+                            <span style={{ background: '#ffe0e0', padding: '1px 6px', border: '1px solid #cc0000', fontSize: '10px' }}>档案</span>
+                        </span>
+                        <span style={{ width: '90px', color: '#666', fontSize: '11px' }}>56KB</span>
+                        <span style={{ width: '140px', color: '#666', fontSize: '11px' }}>2002-12-??</span>
+                        <span style={{ width: '60px', textAlign: 'center', fontSize: '10px', color: '#cc8800' }}>⚠ 学生笔记</span>
+                    </div>
+                    <div
+                        style={{
+                            padding: '6px 12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            borderBottom: '1px dotted #d0d0d0',
+                            cursor: 'pointer',
+                            background: '#fff8e8',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = '#fff0d0'}
+                        onMouseLeave={e => e.currentTarget.style.background = '#fff8e8'}
+                        onClick={() => window.location.hash = '#/archives/1987-masters-thesis'}
+                    >
+                        <span style={{ width: '30px', fontSize: '16px' }}>📜</span>
+                        <span style={{ flex: 1 }}>1987_硕士论文_海马体CA1区研究_摘要.pdf</span>
+                        <span style={{ width: '100px', fontSize: '11px' }}>
+                            <span style={{ background: '#ffe0e0', padding: '1px 6px', border: '1px solid #cc0000', fontSize: '10px' }}>档案</span>
+                        </span>
+                        <span style={{ width: '90px', color: '#666', fontSize: '11px' }}>18KB</span>
+                        <span style={{ width: '140px', color: '#666', fontSize: '11px' }}>1987-05-??</span>
+                        <span style={{ width: '60px', textAlign: 'center', fontSize: '10px', color: '#cc0000' }}>💀 残缺</span>
+                    </div>
+                    <div
+                        style={{
+                            padding: '6px 12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            borderBottom: '1px dotted #d0d0d0',
+                            cursor: 'pointer',
+                            background: '#fff8e8',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = '#fff0d0'}
+                        onMouseLeave={e => e.currentTarget.style.background = '#fff8e8'}
+                        onClick={() => window.location.hash = '#/archives/2001-provincial-policy'}
+                    >
+                        <span style={{ width: '30px', fontSize: '16px' }}>📜</span>
+                        <span style={{ flex: 1 }}>2001_省政府_学科交叉融合政策文件.txt</span>
+                        <span style={{ width: '100px', fontSize: '11px' }}>
+                            <span style={{ background: '#e8ffe8', padding: '1px 6px', border: '1px solid #008000', fontSize: '10px' }}>公开</span>
+                        </span>
+                        <span style={{ width: '90px', color: '#666', fontSize: '11px' }}>32KB</span>
+                        <span style={{ width: '140px', color: '#666', fontSize: '11px' }}>2001-09-10</span>
+                        <span style={{ width: '60px', textAlign: 'center', fontSize: '10px', color: '#008000' }}>完整</span>
+                    </div>
+
                     {/* 文件 */}
                     {allResources.map((r, idx) => (
                         <div
