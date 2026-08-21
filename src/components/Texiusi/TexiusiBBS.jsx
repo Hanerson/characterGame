@@ -9,6 +9,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useGame } from '../../state/GameContext.jsx';
 import {
     initialPosts,
     forumCategories,
@@ -96,7 +97,7 @@ const timeAgo = (dateStr) => {
 // 主组件
 // ============================================================
 export const TexiusiBBS = () => {
-    const [view, setView] = useState('categories'); // 'categories' | 'list' | 'detail'
+    const [view, setView] = useState('categories'); // 'categories' | 'list' | 'detail' | 'timeline'
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedPost, setSelectedPost] = useState(null);
     const [selectedEpoch, setSelectedEpoch] = useState('all');
@@ -106,6 +107,16 @@ export const TexiusiBBS = () => {
     const [backStack, setBackStack] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [timelineMode, setTimelineMode] = useState(false);
+    const { checkGate } = useGame();
+
+    // 终末时段帖子解锁：需要先访问系统诊断控制台（世界内表现为"该时段记录尚未开放"）
+    useEffect(() => {
+        const gatePassed = checkGate('bbsGlitch');
+        if (!gatePassed && selectedEpoch === 'glitch') {
+            setSelectedEpoch('all');
+        }
+    }, [checkGate, selectedEpoch]);
 
     // 模拟时钟
     const [clock, setClock] = useState('');
@@ -210,19 +221,19 @@ export const TexiusiBBS = () => {
         setBackStack([]);
     };
 
-    // 模拟写入操作
+    // 模拟写入操作（只读论坛的自然表现）
     const handleWriteAction = (action) => {
         const messages = {
-            '发帖': `写入操作被拒绝。\n\nlocal_mind.db 处于只读归档模式。\n数据库文件大小: 47.3 MB\n操作: INSERT INTO posts\n状态: FAILED — 文件系统权限不足\n\n时间戳: ${new Date().toISOString().replace('T', ' ').slice(0, 19)}\n用户: guest_anonymous@210.28.128.4`,
-            '回复': `回复提交失败。\n\nHTTP 500 — Internal Server Error\n数据库写入操作被系统策略阻止。\n\n详情: 所有写入请求在到达磁盘前被 sweeper 守护进程拦截。`,
-            '搜索': `搜索功能需要全文索引。\n\nlocal_mind.db 的全文索引 (FTS) 模块未安装。\n当前仅支持标题和作者的基本字符串匹配。\n\n建议: 手动浏览版块。`,
-            '登录': `登录服务不可用。\n\n用户认证模块 (auth.dll) 未加载。\n数据库用户表仅包含1条记录 (user_id: u_0001)。\n密码验证已被跳过——所有会话共享同一安全上下文。`,
-            '注册': `注册功能已关闭。\n\n新用户注册在 2003 年后被管理员禁用。\n自那以后，论坛未接受任何新成员。\n\n原因: 未记录。`,
-            '私信': `短消息系统未初始化。\n\npm_table 在数据库中不存在。\n内部通信目前通过...其他方式实现。`,
+            '发帖': `无法发布主题。\n\n论坛当前处于只读状态。\n\n如需发帖，请联系管理员开通权限。\n\n(发帖功能自 2018 年起暂停。)`,
+            '回复': `无法回复。\n\n论坛当前处于只读状态。\n\n(回复功能自 2018 年起暂停。)`,
+            '搜索': `搜索功能不可用。\n\n全文检索服务未开启。\n请直接在版块中浏览主题。`,
+            '登录': `登录失败。\n\n您输入的账号不存在。\n\n(该论坛自 2003 年起已停止开放新账号注册。\n现有账号均由建站初期的用户持有。)`,
+            '注册': `注册功能已关闭。\n\n新用户注册自 2003 年起暂停。\n\n如需获取账号，请联系管理员。`,
+            '私信': `短消息功能不可用。\n\n(该功能从未开放。)`,
         };
         showErrorDialog(
             action,
-            messages[action] || `操作失败: ${action}\n\n服务器拒绝处理此请求。\n\nlocal_mind.db 处于只读模式。`
+            messages[action] || `操作失败: ${action}\n\n请稍后再试。`
         );
     };
 
@@ -340,6 +351,202 @@ export const TexiusiBBS = () => {
     };
 
     // ============================================================
+    // 时间线视图 — 25年叙事弧线
+    // ============================================================
+    const TimelineView = () => {
+        const sorted = [...initialPosts].sort((a, b) => a.date.localeCompare(b.date));
+
+        // 按年份分组
+        const byYear = {};
+        sorted.forEach(p => {
+            const year = p.date.slice(0, 4);
+            if (!byYear[year]) byYear[year] = [];
+            byYear[year].push(p);
+        });
+
+        const years = Object.keys(byYear).sort();
+
+        const yearColors = {
+            '2001': '#2e7d32', '2002': '#2e7d32', '2003': '#2e7d32',
+            '2006': '#e65100', '2007': '#e65100', '2008': '#e65100',
+            '2009': '#e65100', '2010': '#e65100', '2011': '#e65100',
+            '2012': '#e65100', '2013': '#e65100', '2014': '#e65100',
+            '2015': '#c62828', '2016': '#c62828', '2017': '#c62828',
+            '2018': '#c62828', '2019': '#c62828', '2020': '#c62828',
+            '2021': '#c62828',
+            '2023': '#6a1b9a', '2024': '#6a1b9a', '2025': '#6a1b9a', '2026': '#6a1b9a',
+        };
+
+        return (
+            <div>
+                {/* 时间线头部说明 */}
+                <div style={{
+                    background: 'linear-gradient(135deg, #2B7ACD, #1a5fa0)',
+                    color: '#fff',
+                    borderRadius: '3px',
+                    padding: '16px 20px',
+                    marginBottom: '16px',
+                }}>
+                    <div style={{ fontSize: '15px', fontWeight: 'bold', marginBottom: '6px' }}>
+                        🗓 全部主题 · 按时间归档
+                    </div>
+                    <div style={{ fontSize: '11px', lineHeight: 1.8, opacity: 0.85 }}>
+                        本论坛自2001年建立以来的全部主题，按发布时间顺序排列。
+                        <br />
+                        共 {sorted.length} 篇主题。
+                    </div>
+                </div>
+
+                {/* 时间轴主体 */}
+                <div style={{
+                    background: '#fff',
+                    border: '1px solid #c0c0c0',
+                    borderRadius: '3px',
+                    padding: '20px 16px',
+                    position: 'relative',
+                }}>
+                    {/* 中线 */}
+                    <div style={{
+                        position: 'absolute',
+                        left: '31px',
+                        top: '20px',
+                        bottom: '20px',
+                        width: '3px',
+                        background: 'linear-gradient(180deg, #4caf50, #ff9800, #f44336, #9c27b0)',
+                        opacity: 0.35,
+                    }} />
+
+                    {years.map((year, yi) => (
+                        <div key={year}>
+                            {/* 年份节点 */}
+                            <div style={{
+                                position: 'relative',
+                                marginBottom: '12px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                            }}>
+                                <div style={{
+                                    width: '28px',
+                                    height: '28px',
+                                    borderRadius: '50%',
+                                    background: yearColors[year] || '#888',
+                                    color: '#fff',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '10px',
+                                    fontWeight: 'bold',
+                                    flexShrink: 0,
+                                    zIndex: 1,
+                                    border: '2px solid #fff',
+                                    boxShadow: '0 0 0 1px #c0c0c0',
+                                }}>
+                                    {year.slice(2)}
+                                </div>
+                                <div style={{
+                                    fontSize: '13px',
+                                    fontWeight: 'bold',
+                                    color: yearColors[year] || '#333',
+                                }}>
+                                    {year}年
+                                    <span style={{ fontSize: '10px', color: '#999', fontWeight: 'normal', marginLeft: '8px' }}>
+                                        {byYear[year].length} 篇
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* 该年份的帖子 */}
+                            {byYear[year].map((post, pi) => (
+                                <div
+                                    key={post.id}
+                                    onClick={() => enterPost(post)}
+                                    style={{
+                                        marginLeft: '40px',
+                                        marginBottom: '8px',
+                                        background: pi % 2 === 0 ? '#fafafa' : '#f5f8ff',
+                                        border: '1px solid #e0e0e0',
+                                        borderLeft: `3px solid ${yearColors[year] || '#888'}`,
+                                        borderRadius: '0 3px 3px 0',
+                                        padding: '8px 12px',
+                                        cursor: 'pointer',
+                                        transition: 'box-shadow 0.15s, transform 0.1s',
+                                    }}
+                                    onMouseEnter={e => {
+                                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                                        e.currentTarget.style.transform = 'translateX(2px)';
+                                    }}
+                                    onMouseLeave={e => {
+                                        e.currentTarget.style.boxShadow = 'none';
+                                        e.currentTarget.style.transform = 'none';
+                                    }}
+                                >
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                    }}>
+                                        <span style={{
+                                            fontSize: '12px',
+                                            fontWeight: 'bold',
+                                            color: '#003399',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap',
+                                        }}>
+                                            {post.title}
+                                        </span>
+                                        <span style={{
+                                            fontSize: '10px',
+                                            color: '#999',
+                                            whiteSpace: 'nowrap',
+                                            fontFamily: 'Courier New, monospace',
+                                        }}>
+                                            {post.date.slice(5, 16)}
+                                        </span>
+                                    </div>
+                                    <div style={{
+                                        display: 'flex',
+                                        gap: '12px',
+                                        marginTop: '4px',
+                                        fontSize: '10px',
+                                        color: '#aaa',
+                                    }}>
+                                        <span>{post.author}</span>
+                                        <span>💬 {post.replies}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+
+                    {/* 时间线终点 */}
+                    <div style={{
+                        marginLeft: '40px',
+                        marginTop: '16px',
+                        padding: '14px 16px',
+                        background: '#f3e5f5',
+                        border: '1px dashed #6a1b9a',
+                        borderRadius: '3px',
+                        textAlign: 'center',
+                        fontSize: '12px',
+                        color: '#6a1b9a',
+                        lineHeight: 1.8,
+                        fontStyle: 'italic',
+                    }}>
+                        "最后的帖子是一个句号。"
+                        <br />
+                        <span style={{ fontSize: '10px', color: '#9c6ab0' }}>
+                            26块木板全部换完。船还在。
+                        </span>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    // ============================================================
     // 侧边栏组件
     // ============================================================
     const Sidebar = () => (
@@ -371,13 +578,7 @@ export const TexiusiBBS = () => {
                         当前身份：<span style={{ color: '#999', fontStyle: 'italic' }}>游客 (Guest)</span>
                     </div>
                     <div style={{ color: '#666' }}>
-                        IP地址：<span style={{ fontFamily: 'Courier New, monospace', color: '#cc0000' }}>210.28.128.4</span>
-                    </div>
-                    <div style={{ color: '#666' }}>
-                        用户ID：<span style={{ fontFamily: 'Courier New, monospace' }}>u_0001</span>
-                    </div>
-                    <div style={{ color: '#666' }}>
-                        活跃别名：<span style={{ fontWeight: 'bold', color: '#003399' }}>27</span>
+                        发帖权限：<span style={{ color: '#cc8800' }}>只读</span>
                     </div>
                     <div style={{ marginTop: '6px', display: 'flex', gap: '4px' }}>
                         <button
@@ -406,6 +607,9 @@ export const TexiusiBBS = () => {
                             注册
                         </button>
                     </div>
+                    <div style={{ fontSize: '10px', color: '#aaa', marginTop: '6px', lineHeight: 1.6 }}>
+                        您当前的访问权限为只读。
+                    </div>
                 </div>
             </div>
 
@@ -426,12 +630,12 @@ export const TexiusiBBS = () => {
                     📊 论坛统计
                 </div>
                 <div style={{ padding: '10px', fontSize: '12px', lineHeight: 2, color: '#666' }}>
-                    <div>帖子总数：<strong style={{ color: '#333' }}>{stats.totalPosts}</strong></div>
-                    <div>评论总数：<strong style={{ color: '#333' }}>{stats.totalComments}</strong></div>
+                    <div>主题总数：<strong style={{ color: '#333' }}>{stats.totalPosts}</strong></div>
+                    <div>回复总数：<strong style={{ color: '#333' }}>{stats.totalComments}</strong></div>
                     <div>注册用户：<strong style={{ color: '#333' }}>{stats.totalUsers}</strong></div>
-                    <div>最新帖子：<span style={{ fontSize: '10px', color: '#999' }}>{stats.lastPost.slice(0, 10)}</span></div>
+                    <div>今日新帖：<span style={{ color: '#999' }}>0</span></div>
                     <div style={{ marginTop: '4px', fontSize: '10px', color: '#999' }}>
-                        数据库: local_mind.db (47.3 MB)
+                        建站时间：2001年11月1日
                     </div>
                 </div>
             </div>
@@ -516,12 +720,10 @@ export const TexiusiBBS = () => {
                             background: '#4caf50',
                             display: 'inline-block',
                         }}></span>
-                        <span style={{ color: '#666' }}>在线人数：<strong style={{ color: '#333' }}>1</strong></span>
+                        <span style={{ color: '#666' }}>当前在线：<strong style={{ color: '#333' }}>1</strong></span>
                     </div>
                     <div style={{ color: '#999', fontSize: '10px', marginTop: '4px' }}>
-                        所有用户共享同一会话。
-                        <br />
-                        未连接到外部网络。
+                        会员 0 人 | 游客 1 人
                     </div>
                 </div>
             </div>
@@ -661,9 +863,9 @@ export const TexiusiBBS = () => {
                 所有用户以匿名身份参与讨论。系统不记录真实姓名、邮箱或密码。
                 <br />
                 <span style={{ fontSize: '10px', color: '#999' }}>
-                    注意：当前浏览的是只读存档快照。数据库运行在 Append-Only 模式。
+                    本站建立于 2001 年，目前仅对校内网络开放。
                     <br />
-                    在线人数: 1 | 用户ID: u_0001 | 活跃别名: 27 | 运行时间: 25年
+                    论坛目前为只读状态，如需发帖请联系管理员。
                 </span>
             </div>
         </div>
@@ -696,6 +898,22 @@ export const TexiusiBBS = () => {
                         </span>
                     </div>
                     <div style={{ display: 'flex', gap: '6px' }}>
+                        <button
+                            onClick={() => setTimelineMode(m => !m)}
+                            style={{
+                                padding: '4px 14px',
+                                fontSize: '12px',
+                                minWidth: 'unset',
+                                background: timelineMode ? '#e65100' : '#fff',
+                                color: timelineMode ? '#fff' : '#555',
+                                border: `1px solid ${timelineMode ? '#c04000' : '#c0c0c0'}`,
+                                cursor: 'pointer',
+                                fontWeight: 'bold',
+                            }}
+                            title="按时间顺序查看25年的帖子轨迹"
+                        >
+                            {timelineMode ? '📋 列表视图' : '🗓 时间线视图'}
+                        </button>
                         <button
                             onClick={() => handleWriteAction('发帖')}
                             style={{
@@ -732,11 +950,16 @@ export const TexiusiBBS = () => {
                         { key: 'early', label: '早期 (01-03)' },
                         { key: 'mid', label: '中期 (06-14)' },
                         { key: 'late', label: '后期 (15-21)' },
-                        { key: 'glitch', label: '终末 (23-26)' },
+                        { key: 'glitch', label: '终末 (23-26)', locked: !checkGate('bbsGlitch') },
                     ].map(f => (
                         <button
                             key={f.key}
                             onClick={() => {
+                                if (f.locked) {
+                                    window.showSystemDialog?.('error', '访问受限',
+                                        '终末时段 (2023-2026) 的主题无法访问。\n\n原因：该时段的记录尚未对外开放。');
+                                    return;
+                                }
                                 setSelectedEpoch(f.key);
                                 setCurrentPage(1);
                             }}
@@ -744,14 +967,19 @@ export const TexiusiBBS = () => {
                                 padding: '2px 10px',
                                 fontSize: '10px',
                                 minWidth: 'unset',
-                                background: selectedEpoch === f.key ? '#2B7ACD' : '#fff',
-                                color: selectedEpoch === f.key ? '#fff' : '#666',
-                                border: `1px solid ${selectedEpoch === f.key ? '#1a5fa0' : '#d0d0d0'}`,
-                                cursor: 'pointer',
+                                background: f.locked
+                                    ? '#f0f0f0'
+                                    : selectedEpoch === f.key ? '#2B7ACD' : '#fff',
+                                color: f.locked
+                                    ? '#ccc'
+                                    : selectedEpoch === f.key ? '#fff' : '#666',
+                                border: `1px solid ${f.locked ? '#e0e0e0' : selectedEpoch === f.key ? '#1a5fa0' : '#d0d0d0'}`,
+                                cursor: f.locked ? 'not-allowed' : 'pointer',
                                 boxShadow: 'none',
                             }}
+                            title={f.locked ? '🔒 该时段的记录尚未对外开放' : undefined}
                         >
-                            {f.label}
+                            {f.locked ? '🔒 ' : ''}{f.label}
                         </button>
                     ))}
                     <span style={{ flex: 1 }} />
@@ -911,9 +1139,7 @@ export const TexiusiBBS = () => {
                                                                 {ec.label}
                                                             </span>
                                                             <span>{formatDate(post.date)}</span>
-                                                            <span style={{ fontFamily: 'Courier New, monospace' }}>
-                                                                IP: {post.ip}
-                                                            </span>
+                                                            <span>作者: {post.author}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1048,12 +1274,6 @@ export const TexiusiBBS = () => {
                             作者: <strong style={{ color: '#333' }}>{post.author}</strong>
                         </span>
                         <span>发表于: <span style={{ fontFamily: 'Courier New, monospace' }}>{post.date}</span></span>
-                        <span>
-                            IP: <span style={{
-                                fontFamily: 'Courier New, monospace',
-                                color: '#cc0000',
-                            }}>{post.ip}</span>
-                        </span>
                         <span style={{
                             display: 'inline-block',
                             padding: '1px 8px',
@@ -1133,7 +1353,7 @@ export const TexiusiBBS = () => {
                                         fontSize: '10px',
                                     }}>
                                         "{authorProfile.signature}"
-                                        {(authorId === 'Anonymous_03') && (
+                                        {(post.author === 'Anonymous_03') && (
                                             <div style={{ marginTop: '4px' }}>
                                                 <Link
                                                     to="/archives/2001-blog-information-complexity"
@@ -1143,7 +1363,7 @@ export const TexiusiBBS = () => {
                                                 </Link>
                                             </div>
                                         )}
-                                        {(authorId === 'Anonymous_14') && (
+                                        {(post.author === 'Anonymous_14') && (
                                             <div style={{ marginTop: '4px' }}>
                                                 <Link
                                                     to="/archives/1997-self-study-notes"
@@ -1454,7 +1674,7 @@ export const TexiusiBBS = () => {
                                 e.target.style.borderColor = 'rgba(255,255,255,0.2)';
                             }}
                         >
-                            🖥️ 桌面
+                            🏠 门户首页
                         </Link>
                     </div>
                 </div>
@@ -1744,7 +1964,7 @@ export const TexiusiBBS = () => {
                     {/* 左侧主内容 */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                         {view === 'categories' && <CategoryListView />}
-                        {view === 'list' && <PostListView />}
+                        {view === 'list' && (timelineMode ? <TimelineView /> : <PostListView />)}
                         {view === 'detail' && <PostDetailView />}
                     </div>
 
@@ -1767,20 +1987,20 @@ export const TexiusiBBS = () => {
                 flexShrink: 0,
             }}>
                 <div>
-                    TexiusiShip BBS v1.0 | Powered by sandbox kernel | local_mind.db (47.3 MB)
+                    TexiusiShip BBS v1.0 | 站点维护：网络与信息化办公室
                 </div>
                 <div>
-                    运行环境：独立节点 (IP: 210.28.128.4) | 未连接到互联网 — 本地环回
+                    服务状态：只读 | 校园网内网服务
                 </div>
                 <div style={{ marginTop: '4px', display: 'flex', justifyContent: 'center', gap: '16px' }}>
                     <Link to="/" style={{ fontSize: '10px', color: '#999' }}>
-                        🖥️ 返回桌面
+                        🏠 返回门户首页
+                    </Link>
+                    <Link to="/archives" style={{ fontSize: '10px', color: '#999' }}>
+                        📂 档案检索
                     </Link>
                     <Link to="/system/logs" style={{ fontSize: '10px', color: '#999' }}>
-                        📋 系统日志
-                    </Link>
-                    <Link to="/system/console" style={{ fontSize: '10px', color: '#999' }}>
-                        ⚙️ 管理控制台
+                        📋 诊断系统
                     </Link>
                     <span
                         onClick={() => handleWriteAction('私信')}
@@ -1790,7 +2010,7 @@ export const TexiusiBBS = () => {
                     </span>
                 </div>
                 <div style={{ marginTop: '6px', color: '#bbb' }}>
-                    Copyright © 2001-2026 TexiusiShip. All data stored in local_mind.db.
+                    Copyright © 2001-2026 TexiusiShip. All rights reserved.
                     <br />
                     <span style={{ fontStyle: 'italic' }}>
                         "船还在航行。"

@@ -1,16 +1,25 @@
 // src/components/archive/ArchiveHub.jsx
-// 忒修斯之船考古计划 — 档案索引页
+// 档案检索 — 档案索引页
 //
 // 模拟 2021 年考古计划发起人在知识分享平台发布的文章页面。
-// 玩家从这里可以访问所有已"发现"的档案碎片。
+// 访问者从这里可以浏览所有已"恢复"的档案碎片。
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { archiveRegistry, archiveContents } from '../../data/archiveDocuments.js';
+import { useGame } from '../../state/GameContext.jsx';
 
 const ArchiveHub = () => {
     const [filter, setFilter] = useState('all');
     const [showAllDocs, setShowAllDocs] = useState(false);
+    const { checkGate } = useGame();
+
+    // 需要访问权限的档案（世界内自然规则：医疗记录需先在诊断系统确认存在）
+    const gateMap = {
+        '1995-mri-records': { rule: 'docMRI', label: '该档案需要先在诊断控制台中确认其恢复记录。' },
+        '1995-funding-rejection': { rule: 'docFunding', label: '该档案需要先在诊断控制台中确认其恢复记录。' },
+        '1992-sliding-window-paper': { rule: 'doc1992', label: '该档案需要先阅读相关医疗记录。' },
+    };
 
     const categories = [
         { key: 'all', label: '全部档案' },
@@ -44,15 +53,15 @@ const ArchiveHub = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                         <h1 style={{ color: '#fff', fontSize: '18px', margin: 0 }}>
-                            📂 忒修斯之船 · 考古计划
+                            📂 忒修斯之船 · 档案检索
                         </h1>
                         <div style={{ fontSize: '10px', color: '#aabbdd', marginTop: '2px' }}>
-                            一份由陌生人拼凑的档案索引 | 最后更新：2023年2月
+                            校园网档案目录 | 最后更新：2023年2月
                         </div>
                     </div>
                     <div style={{ fontSize: '10px', color: '#aabbdd', textAlign: 'right' }}>
-                        <div>IP: 210.28.128.4</div>
-                        <div>状态: READ_ONLY</div>
+                        <div>校园网内网服务</div>
+                        <div>归档状态</div>
                     </div>
                 </div>
             </header>
@@ -66,9 +75,9 @@ const ArchiveHub = () => {
                 gap: '16px',
                 fontSize: '12px',
             }}>
-                <Link to="/" style={{ color: '#003399' }}>🖥️ 桌面</Link>
+                <Link to="/" style={{ color: '#003399' }}>🏠 门户首页</Link>
                 <span style={{ color: '#666' }}>›</span>
-                <strong>考古计划</strong>
+                <strong>档案检索</strong>
             </nav>
 
             {/* === 主内容区 === */}
@@ -150,7 +159,11 @@ const ArchiveHub = () => {
                             flexDirection: 'column',
                             gap: '6px',
                         }}>
-                            {filtered.map(doc => (
+                            {filtered.map(doc => {
+                                const gate = gateMap[doc.id];
+                                const gated = gate && !checkGate(gate.rule);
+                                const canOpen = !gated;
+                                return (
                                 <div
                                     key={doc.id}
                                     className="raised"
@@ -160,7 +173,7 @@ const ArchiveHub = () => {
                                         display: 'flex',
                                         gap: '12px',
                                         alignItems: 'flex-start',
-                                        opacity: doc.accessLevel === 'locked' ? 0.6 : 1,
+                                        opacity: doc.accessLevel === 'locked' || gated ? 0.6 : 1,
                                     }}
                                 >
                                     {/* 图标 */}
@@ -181,15 +194,23 @@ const ArchiveHub = () => {
                                     <div style={{ flex: 1, minWidth: 0 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                                             <Link
-                                                to={`/archives/${doc.id}`}
+                                                to={canOpen ? `/archives/${doc.id}` : '#'}
+                                                onClick={(e) => {
+                                                    if (!canOpen) {
+                                                        e.preventDefault();
+                                                        window.showSystemDialog?.('error', '无法读取',
+                                                            `"${doc.title}"\n\n${gate.label}`);
+                                                        return;
+                                                    }
+                                                }}
                                                 style={{
                                                     fontSize: '13px',
                                                     fontWeight: 'bold',
-                                                    color: '#003399',
+                                                    color: gated ? '#999' : '#003399',
                                                     textDecoration: 'none',
                                                 }}
                                             >
-                                                {doc.title}
+                                                {gated ? '🔒 ' : ''}{doc.title}
                                             </Link>
                                             <span style={{
                                                 fontSize: '10px',
@@ -219,6 +240,15 @@ const ArchiveHub = () => {
                                                     🔒 受限访问
                                                 </span>
                                             )}
+                                            {gated && (
+                                                <span style={{
+                                                    fontSize: '10px',
+                                                    color: '#6a1b9a',
+                                                    whiteSpace: 'nowrap',
+                                                }}>
+                                                    🔒 需先访问相关记录
+                                                </span>
+                                            )}
                                         </div>
                                         <div style={{ fontSize: '11px', color: '#666', lineHeight: 1.5 }}>
                                             {doc.summary}
@@ -230,6 +260,7 @@ const ArchiveHub = () => {
 
                                     {/* 操作 */}
                                     <div style={{ flexShrink: 0 }}>
+                                        {canOpen ? (
                                         <Link
                                             to={`/archives/${doc.id}`}
                                             style={{
@@ -248,9 +279,32 @@ const ArchiveHub = () => {
                                         >
                                             查看 →
                                         </Link>
+                                        ) : (
+                                        <button
+                                            onClick={() => {
+                                                window.showSystemDialog?.('error', '无法读取',
+                                                    `"${doc.title}"\n\n${gate.label}`);
+                                            }}
+                                            style={{
+                                                padding: '3px 10px',
+                                                background: '#e0e0e0',
+                                                color: '#999',
+                                                borderTop: '2px solid #fff',
+                                                borderLeft: '2px solid #fff',
+                                                borderRight: '2px solid #808080',
+                                                borderBottom: '2px solid #808080',
+                                                fontSize: '11px',
+                                                cursor: 'not-allowed',
+                                                fontFamily: '"SimSun", "宋体", Tahoma, sans-serif',
+                                            }}
+                                        >
+                                            🔒 锁定
+                                        </button>
+                                        )}
                                     </div>
                                 </div>
-                            ))}
+                                );
+                            })}
                         </div>
 
                         <div style={{
@@ -284,7 +338,7 @@ const ArchiveHub = () => {
                 </div>
                 <div style={{ marginTop: '4px' }}>
                     <Link to="/" style={{ fontSize: '10px', color: '#999' }}>
-                        🖥️ 返回桌面
+                        🏠 返回门户首页
                     </Link>
                     <span style={{ margin: '0 8px' }}>|</span>
                     <Link to="/dep" style={{ fontSize: '10px', color: '#999' }}>

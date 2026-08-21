@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { serverResponseTemplates } from '../../data/storyData.js';
+import { useGame } from '../../state/GameContext.jsx';
 
 const AdminConsole = () => {
     const [authStatus, setAuthStatus] = useState('checking');
@@ -10,6 +11,8 @@ const AdminConsole = () => {
     const [queryResult, setQueryResult] = useState(null);
     const [typedText, setTypedText] = useState('');
     const [showTruth, setShowTruth] = useState(false);
+    const { checkGate } = useGame();
+    const truthUnlocked = checkGate('adminTruth');
 
     const fullTruthText = `实验代号：忒修斯协议 (Theseus Protocol)
 实验状态：进行中（第25年）
@@ -194,7 +197,7 @@ const AdminConsole = () => {
                                 textDecoration: 'underline',
                             }}
                         >
-                            返回桌面
+                            返回门户首页
                         </Link>
                     </div>
                 </div>
@@ -224,7 +227,7 @@ const AdminConsole = () => {
             }}>
                 <span>⚠️ ADMIN CONSOLE — 绕过认证 (PARADOX MODE)</span>
                 <Link to="/" style={{ color: '#ffcccc', fontSize: '11px', textDecoration: 'none' }}>
-                    ← 返回桌面
+                    ← 返回门户首页
                 </Link>
             </div>
 
@@ -260,15 +263,22 @@ const AdminConsole = () => {
                         { key: 'users', label: '👤 用户管理' },
                         { key: 'sweeper', label: '🧹 清道夫控制' },
                         { key: 'experiment', label: '🧪 实验协议' },
-                        { key: 'truth', label: '📜 完整实验记录' },
+                        { key: 'truth', label: truthUnlocked ? '📜 完整实验记录' : '📜 完整实验记录 🔒', locked: !truthUnlocked },
                     ].map(item => (
                         <div
                             key={item.key}
                             onClick={() => {
+                                if (item.locked) {
+                                    window.showSystemDialog?.('error', '访问受限',
+                                        `完整实验记录需要更高的访问权限。\n\n提示：该记录只对完成了校园网主要区域访问的会话开放。`);
+                                    return;
+                                }
                                 setActivePanel(item.key);
                                 if (item.key === 'db') handleDbQuery('participants');
                                 if (item.key === 'users') handleDbQuery('sessions');
-                                if (item.key === 'truth') setShowTruth(true);
+                                if (item.key === 'truth') {
+                                    setShowTruth(true);
+                                }
                             }}
                             style={{
                                 padding: '8px 16px',

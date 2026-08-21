@@ -11,6 +11,7 @@
 import { useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { archiveContents, getDocById } from '../../data/archiveDocuments.js';
+import { useGame } from '../../state/GameContext.jsx';
 
 // ============================================================
 // 风格渲染器
@@ -491,9 +492,76 @@ const Cursor = () => (
 const DocumentViewer = () => {
     const { docId } = useParams();
     const navigate = useNavigate();
+    const { checkGate } = useGame();
 
     const docMeta = useMemo(() => getDocById(docId), [docId]);
     const docContent = useMemo(() => archiveContents[docId], [docId]);
+
+    // 需要访问权限的档案（世界内自然规则）
+    const gateMap = {
+        '1995-mri-records': { rule: 'docMRI', label: '该档案需要先在诊断控制台中确认其恢复记录。' },
+        '1995-funding-rejection': { rule: 'docFunding', label: '该档案需要先在诊断控制台中确认其恢复记录。' },
+        '1992-sliding-window-paper': { rule: 'doc1992', label: '该档案需要先阅读相关医疗记录。' },
+    };
+
+    const gate = docMeta && gateMap[docId];
+    const gated = gate && !checkGate(gate.rule);
+
+    // 档案暂时无法访问
+    if (gated) {
+        return (
+            <div style={{
+                backgroundColor: '#c0c0c0',
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: '"SimSun", "宋体", Tahoma, sans-serif',
+            }}>
+                <div className="win-window" style={{ width: '440px' }}>
+                    <div className="win-titlebar">
+                        <span className="title-text">⚠ 无法读取</span>
+                        <span>✕</span>
+                    </div>
+                    <div style={{ padding: '24px', textAlign: 'center', background: '#fff' }}>
+                        <div style={{ fontSize: '40px', marginBottom: '12px' }}>📁</div>
+                        <p style={{ fontSize: '13px', color: '#cc0000', marginBottom: '8px' }}>
+                            无法读取 "{docMeta.title}"。
+                        </p>
+                        <p style={{
+                            fontSize: '11px',
+                            color: '#808080',
+                            lineHeight: 1.8,
+                            marginBottom: '8px',
+                        }}>
+                            {gate.label}
+                            <br />
+                            <br />
+                            该记录可能存储于诊断系统的数据恢复目录中。
+                        </p>
+                        <button
+                            onClick={() => navigate('/archives')}
+                            style={{
+                                marginTop: '16px',
+                                padding: '4px 16px',
+                                background: '#c0c0c0',
+                                borderTop: '2px solid #fff',
+                                borderLeft: '2px solid #fff',
+                                borderRight: '2px solid #808080',
+                                borderBottom: '2px solid #808080',
+                                boxShadow: '1px 1px 0 #000',
+                                cursor: 'pointer',
+                                fontSize: '12px',
+                                fontFamily: '"SimSun", "宋体", Tahoma, sans-serif',
+                            }}
+                        >
+                            ← 返回档案索引
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (!docMeta || !docContent) {
         return (
@@ -513,12 +581,12 @@ const DocumentViewer = () => {
                     <div style={{ padding: '24px', textAlign: 'center', background: '#fff' }}>
                         <div style={{ fontSize: '40px', marginBottom: '12px' }}>📁</div>
                         <p style={{ fontSize: '13px', color: '#cc0000', marginBottom: '8px' }}>
-                            请求的档案不存在于 local_mind.db 中。
+                            请求的档案不存在或已被移除。
                         </p>
                         <p style={{ fontSize: '11px', color: '#808080' }}>
-                            该档案可能已被清道夫 (sweeper_daemon) 删除，
+                            该档案可能已随存储介质归档，
                             <br />
-                            或从未被写入数据库。
+                            或尚未从备份中恢复。
                         </p>
                         <button
                             onClick={() => navigate(-1)}
@@ -583,7 +651,7 @@ const DocumentViewer = () => {
                         </div>
                     </div>
                     <div style={{ fontSize: '10px', color: '#aabbdd', textAlign: 'right' }}>
-                        <div>local_mind.db → archives → {docMeta.category}</div>
+                        <div>档案库 → {docMeta.category}</div>
                         <div>访问级别: {docMeta.accessLevel.toUpperCase()}</div>
                     </div>
                 </div>
@@ -598,7 +666,7 @@ const DocumentViewer = () => {
                 gap: '16px',
                 fontSize: '12px',
             }}>
-                <Link to="/" style={{ color: '#003399' }}>🖥️ 桌面</Link>
+                <Link to="/" style={{ color: '#003399' }}>🏠 门户首页</Link>
                 <Link to="/archives" style={{ color: '#003399' }}>📂 考古计划</Link>
                 <span style={{ color: '#666' }}>›</span>
                 <span style={{ color: '#333' }}>{docMeta.title}</span>

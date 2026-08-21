@@ -10,6 +10,12 @@ const Home = () => {
     const [activeTab, setActiveTab] = useState('announcements');
     const [showSource, setShowSource] = useState(false);
 
+    // 课程名称异常 — 查看"名称修复程序"
+    const handleCourseNameClick = () => {
+        window.showSystemDialog?.('info', '课程名称自动修复程序',
+            `课程名称: ${basicInfo.courseName}\n\n该名称由"名称自动修复程序"维护。\n程序自2001年起运行，尝试将两个问号替换为正确的字符——但替换所需的字典数据块从未被写入数据库。\n\n修复进度: 0%\n预计完成时间: 无`);
+    };
+
     return (
         <div className="page-enter" style={{
             backgroundColor: '#d8e4f8',
@@ -53,9 +59,9 @@ const Home = () => {
                                 </p>
                             </td>
                             <td style={{ textAlign: 'right', fontSize: '11px', verticalAlign: 'top', color: '#aabbdd' }}>
-                                <div>当前用户：<strong>guest_anonymous</strong></div>
-                                <div>IP地址：<strong>210.28.128.4</strong></div>
-                                <div>会话ID：<span style={{ fontFamily: 'Courier New, monospace' }}>6A3F-08B1-22D4</span></div>
+                                <div>开课单位：计算机学院</div>
+                                <div>课程平台：校内网教学系统</div>
+                                <div>欢迎访问本课程站点</div>
                             </td>
                         </tr>
                     </tbody>
@@ -102,7 +108,7 @@ const Home = () => {
                             onClick={(e) => {
                                 e.preventDefault();
                                 window.showSystemDialog?.('info', '功能未开放',
-                                    `"${item.label.replace(/[^一-龥a-zA-Z]/g, '').trim()}" 页面正在建设中。\n\n该模块需要独立的数据库读取权限。\n当前访客账户 (guest_anonymous) 权限不足。\n\n请联系管理员 (Anonymous_01) 获取授权。`);
+                                    `"${item.label.replace(/[^一-龥a-zA-Z]/g, '').trim()}" 页面正在建设中。\n\n该模块暂未对普通访问开放。\n如需使用，请联系课程管理员。`);
                             }}
                             style={{
                                 display: 'block',
@@ -134,7 +140,7 @@ const Home = () => {
 
             {/* === 面包屑 === */}
             <div className="breadcrumbs" style={{ padding: '8px 20px', background: '#f0f0f0', borderBottom: '1px solid #ccc' }}>
-                <Link to="/">🖥️ 桌面</Link>
+                <Link to="/">🏠 门户首页</Link>
                 <span className="sep">›</span>
                 <strong>编译原理课程主页</strong>
             </div>
@@ -162,13 +168,22 @@ const Home = () => {
                                         borderBottom: '2px solid #003399',
                                         paddingBottom: '8px',
                                     }}>
-                                        {basicInfo.courseName}
+                                        <span
+                                            onClick={handleCourseNameClick}
+                                            style={{ cursor: 'pointer' }}
+                                            title="点击查看名称修复程序状态"
+                                        >
+                                            {basicInfo.courseName}
+                                        </span>
                                         <span style={{
                                             fontSize: '11px',
                                             color: '#cc0000',
                                             marginLeft: '8px',
                                             fontStyle: 'italic',
-                                        }}>
+                                            cursor: 'pointer',
+                                        }}
+                                            onClick={handleCourseNameClick}
+                                        >
                                             [名称自动修复中...]
                                         </span>
                                     </h2>
@@ -183,7 +198,7 @@ const Home = () => {
                                                 <td style={{ color: '#666' }}>课程平台：</td>
                                                 <td>
                                                     <span style={{ color: '#cc8800', fontSize: '11px' }}>
-                                                        ⚠ 本地沙盒模式 — 所有数据存储在单文件数据库 (local_mind.db, 47.3MB) 中
+                                                        ⚠ 校内网络教学平台 — 仅限校园网访问
                                                     </span>
                                                 </td>
                                             </tr>
@@ -206,8 +221,13 @@ const Home = () => {
                                             <tr><td style={{ color: '#666' }}>优秀率：</td><td><strong>{statistics.excellentRate}%</strong></td></tr>
                                             <tr>
                                                 <td style={{ color: '#666' }}>数据库记录：</td>
-                                                <td style={{ color: '#cc0000', fontSize: '10px' }}>
-                                                    <em>129条（1条孤立）</em>
+                                                <td style={{ color: '#cc0000', fontSize: '10px', cursor: 'pointer' }}
+                                                    onClick={() => {
+                                                        window.showSystemDialog?.('error', '数据异常',
+                                                            `选课人数: ${statistics.totalStudents}\n数据库记录: 129条\n\n第129条记录没有姓名。\n只有一个IP地址: 210.28.128.4\n\n这条记录自2001年起持续处于"在读"状态。\n它从未选过课，从未交过作业，从未毕业。\n它只是一直在。`);
+                                                    }}
+                                                    title="点击查看第129条记录">
+                                                    <em>129条（1条孤立）</em> 🔍
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -296,6 +316,10 @@ const Home = () => {
                                                         href="#"
                                                         onClick={(e) => {
                                                             e.preventDefault();
+                                                            if (item.id === 'a020') {
+                                                                window.showSystemDialog?.('info', item.title, item.content + '\n\n——教务处尚未公布后续处理结果。');
+                                                                return;
+                                                            }
                                                             window.showSystemDialog?.('info', item.title, item.content);
                                                         }}
                                                         style={{
@@ -330,7 +354,7 @@ const Home = () => {
                                     color: '#808080',
                                 }}>
                                     显示最近15条公告 · 共{announcements.length}条 ·
-                                    <a href="#" onClick={e => { e.preventDefault(); window.showSystemDialog?.('error', '数据库错误', '无法加载更多公告。\n\n数据库连接超时。\nlocal_mind.db 响应时间: > 5000ms'); }} style={{ marginLeft: '4px' }}>
+                                    <a href="#" onClick={e => { e.preventDefault(); window.showSystemDialog?.('error', '加载失败', '无法加载更多公告。\n\n服务器响应超时。\n请稍后再试，或刷新页面。'); }} style={{ marginLeft: '4px' }}>
                                         加载更多...
                                     </a>
                                 </div>
@@ -399,6 +423,19 @@ const Home = () => {
                                         虽已不在教职，但校园网中始终保留着一个由他的账号创建的本地进程，
                                         该进程自2001年11月1日起持续运行至今——没有人知道它何时会停止。
                                     </span>
+                                    <div style={{ marginTop: '6px' }}>
+                                        <a
+                                            href="#"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                window.showSystemDialog?.('info', '离职文件批注',
+                                                    `林远老师的离职文件。\n\n档案编号: P-2001-1210\n\n正文只有一行批注：\n\n「我将在代码中永生。」\n\n档案管理员在下方手写补充：\n"该进程自2001年11月1日0时0分1秒启动，\n持续运行中。\n请勿终止。请勿终止。请勿终止。"`);
+                                            }}
+                                            style={{ fontSize: '11px', color: '#cc0000' }}
+                                        >
+                                            📄 查看离职文件批注 →
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -438,16 +475,16 @@ const Home = () => {
                                                             e.preventDefault();
                                                             if (r.status === 'locked') {
                                                                 window.showSystemDialog?.('error', '访问受限',
-                                                                    `无法下载 "${r.title}"。\n\n该资源需要 SYSTEM 级别访问权限。\n当前用户 (guest_anonymous) 权限不足。\n\n文件元数据：\n- 创建者：${r.author}\n- 位置：/sandbox/restricted/${r.id}\n- 锁定原因：内容涉及实验核心协议`);
+                                                                    `无法下载 "${r.title}"。\n\n该资源需要管理员权限。\n当前账号权限不足。\n\n如需访问，请联系任课教师或课程管理员。`);
                                                             } else if (r.status === 'forbidden') {
                                                                 window.showSystemDialog?.('error', '禁止访问',
-                                                                    `无法下载 "${r.title}"。\n\nHTTP 403 - Forbidden\n\n该文档包含底层数据库架构信息。访问此文件需要直接操作 local_mind.db 的权限。\n\n提示：该数据库当前处于只读归档模式。`);
+                                                                    `无法下载 "${r.title}"。\n\nHTTP 403 - Forbidden\n\n该文档仅限系统管理人员访问。\n如需查阅，请联系网络与信息化办公室。`);
                                                             } else if (r.status === 'corrupted') {
                                                                 window.showSystemDialog?.('error', '文件损坏',
-                                                                    `无法打开 "${r.title}"。\n\n文件头损坏 (Magic number mismatch)。\n读取到: 0x53574545504552 ("SWEEPER")\n预期: 0x454C46 ("ELF")\n\n该文件可能已被垃圾回收守护进程 (sweeper_daemon) 误清理。`);
+                                                                    `无法打开 "${r.title}"。\n\n文件头校验失败。\n\n该文件可能已损坏或未完整上传。\n请稍后再试，或联系课程管理员重新上传。`);
                                                             } else {
                                                                 window.showSystemDialog?.('info', '下载准备中',
-                                                                    `准备下载 "${r.title}"...\n\n文件大小: ${r.size}\n格式: ${r.format}\n\n正在从本地数据库检索文件...\n\n错误: 文件索引存在于数据库中，但对应的二进制数据块在 local_mind.db 中未找到。`);
+                                                                    `准备下载 "${r.title}"...\n\n文件大小: ${r.size}\n格式: ${r.format}\n\n正在从服务器检索文件...\n\n错误: 服务器上存在该文件的索引记录，\n但未找到对应的数据文件。\n\n(该文件可能已随服务器迁移而丢失。)`);
                                                             }
                                                         }}
                                                     >
@@ -491,8 +528,7 @@ const Home = () => {
                                     fontSize: '12px',
                                     color: '#cc8800',
                                 }}>
-                                    ⚠️ 注意：实验项目需要在沙盒环境中完成。所有代码将运行在与论坛相同的本地数据库中。
-                                    请确保你的实验代码不会意外修改共享数据库中的记录。
+                                    ⚠️ 注意：实验项目需要在课程实验平台中完成。请妥善保存您的实验代码。实验数据将统一提交至课程服务器。
                                 </div>
                                 <div style={{
                                     maxHeight: '400px',
@@ -521,7 +557,7 @@ const Home = () => {
                                                                 onClick={(e) => {
                                                                     e.preventDefault();
                                                                     window.showSystemDialog?.('info', `实验: ${lab.name}`,
-                                                                        `${lab.description}\n\n截止日期: ${lab.deadline}\n\n所有实验提交将被写入 local_mind.db 的 assignments 表中。`);
+                                                                        `${lab.description}\n\n截止日期: ${lab.deadline}\n\n实验完成后，请在课程平台提交实验报告。`);
                                                                 }}
                                                             >
                                                                 {lab.name}
@@ -574,7 +610,7 @@ const Home = () => {
                     </div>
                 )}
 
-                {/* === 快速跳转（隐藏） === */}
+                {/* === 快速跳转 === */}
                 <div style={{
                     textAlign: 'center',
                     padding: '20px',
@@ -583,12 +619,10 @@ const Home = () => {
                     border: '1px solid #ccc',
                 }}>
                     <span style={{ fontSize: '11px', color: '#808080' }}>
-                        💡 提示：你可以在桌面双击图标来访问不同页面。双击桌面空白处返回。
-                        <br />
-                        某些功能隐藏在"开始菜单→所有程序"中。
+                        本课程站点为至诚大学校内网服务的一部分。
                         <br />
                         <Link to="/" style={{ fontSize: '11px', color: '#003399' }}>
-                            🖥️ 返回桌面
+                            🏠 返回门户首页
                         </Link>
                     </span>
                 </div>
@@ -597,9 +631,9 @@ const Home = () => {
             {/* === 底部版权 === */}
             <footer className="copyright-bar">
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '6px' }}>
-                    <a href="#" onClick={e => { e.preventDefault(); window.showSystemDialog?.('error', '链接失效', '数字化校园平台需要独立的认证服务。该服务在当前沙盒中不可用。'); }}>数字化校园</a>
+                    <a href="#" onClick={e => { e.preventDefault(); window.showSystemDialog?.('error', '链接失效', '数字化校园平台需要独立的认证服务。该服务当前不可用。'); }}>数字化校园</a>
                     <span>|</span>
-                    <a href="#" onClick={e => { e.preventDefault(); window.showSystemDialog?.('error', '链接失效', '校内网需要外网连接。当前网络环境为本地环回 (127.0.0.1)。'); }}>校内网</a>
+                    <a href="#" onClick={e => { e.preventDefault(); window.showSystemDialog?.('error', '链接失效', '校内网需要外网连接。当前网络环境无法连接外部网络。'); }}>校内网</a>
                     <span>|</span>
                     <Link to="/dep">课程论坛</Link>
                     <span>|</span>
@@ -615,7 +649,7 @@ const Home = () => {
                     版权所有 © 2001-2026 至诚大学计算机学院 | 建议使用 IE6.0 以上浏览器，分辨率 1024×768 或更高
                     <br />
                     <span style={{ fontSize: '10px' }}>
-                        本网站运行在沙盒环境中 | 所有数据存储在 local_mind.db | 访问者IP: 210.28.128.4 | 在线人数: 1
+                        本课程站点为至诚大学校内网服务 | 维护：网络与信息化办公室
                     </span>
                 </div>
             </footer>

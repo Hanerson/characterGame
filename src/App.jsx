@@ -1,7 +1,8 @@
 // src/App.jsx
 
-import { Routes, Route, HashRouter } from 'react-router-dom';
-import Desktop from './components/desktop/Desktop';
+import { Routes, Route, HashRouter, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import PortalHome from './components/portal/PortalHome';
 import Home from './components/official/Home';
 import CourseResources from './components/official/CourseResources';
 import FacultyPage from './components/official/FacultyPage';
@@ -10,34 +11,60 @@ import SystemLogs from './components/system/SystemLogs';
 import AdminConsole from './components/system/AdminConsole';
 import ArchiveHub from './components/archive/ArchiveHub';
 import DocumentViewer from './components/shared/DocumentViewer';
+import BrowserShell from './components/shared/BrowserShell';
+import SystemDialogContainer from './components/shared/SystemDialog';
+import { GameProvider } from './state/GameContext.jsx';
 
 const App = () => {
     return (
-        <HashRouter>
+        <GameProvider>
+            <HashRouter>
+                <AppShell />
+            </HashRouter>
+        </GameProvider>
+    );
+};
+
+// ============================================================
+// 外壳：浏览器框架 + 路由
+// ============================================================
+const AppShell = () => {
+    const location = useLocation();
+
+    // 路由切换时回到顶部
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location.pathname]);
+
+    return (
+        <BrowserShell>
             <Routes>
-                {/* 桌面主入口 — Windows XP 风格 */}
-                <Route path="/" element={<Desktop />} />
+                {/* 门户首页 — 校园网入口 */}
+                <Route path="/" element={<PortalHome />} />
 
                 {/* 编译原理课程 */}
                 <Route path="/course" element={<Home />} />
                 <Route path="/course/resources" element={<CourseResources />} />
                 <Route path="/course/faculty" element={<FacultyPage />} />
 
-                {/* 忒修斯之船匿名论坛（隐藏入口） */}
+                {/* 忒修斯之船匿名论坛（内网站点） */}
                 <Route path="/dep" element={<TexiusiBBS />} />
 
-                {/* 忒修斯之船 · 考古计划 */}
+                {/* 档案检索 */}
                 <Route path="/archives" element={<ArchiveHub />} />
                 <Route path="/archives/:docId" element={<DocumentViewer />} />
 
-                {/* 系统页面 */}
+                {/* 诊断系统 */}
                 <Route path="/system/logs" element={<SystemLogs />} />
                 <Route path="/system/console" element={<AdminConsole />} />
 
                 {/* 404 — 未匹配路由 */}
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
-        </HashRouter>
+
+            {/* 全局系统对话框 */}
+            <SystemDialogContainer />
+        </BrowserShell>
     );
 };
 
@@ -45,82 +72,86 @@ const App = () => {
 const NotFoundPage = () => {
     return (
         <div style={{
-            backgroundColor: '#c0c0c0',
+            backgroundColor: '#f0f0f0',
             minHeight: '100vh',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            fontFamily: '"Courier New", "SimSun", monospace',
+            fontFamily: '"SimSun", "宋体", Tahoma, sans-serif',
             padding: '20px',
         }}>
-            <div className="win-window" style={{ width: '480px', maxWidth: '95%' }}>
-                <div className="win-titlebar">
-                    <span className="title-text">⚠ 页面未找到</span>
-                    <span>✕</span>
+            <div style={{
+                background: '#ffffff',
+                border: '1px solid #c0c0c0',
+                maxWidth: '520px',
+                width: '100%',
+                padding: '32px 36px',
+                textAlign: 'center',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+            }}>
+                <div style={{
+                    fontSize: '52px',
+                    fontWeight: 'bold',
+                    color: '#c0c0c0',
+                    letterSpacing: '2px',
+                }}>
+                    404
                 </div>
-                <div style={{ padding: '24px', textAlign: 'center', background: '#ffffff' }}>
-                    <div style={{ fontSize: '56px', marginBottom: '12px' }}>🔍</div>
-                    <h1 style={{ fontSize: '20px', color: '#cc0000', marginBottom: '12px' }}>
-                        HTTP 404 — Page Not Found
-                    </h1>
-                    <div style={{
-                        fontSize: '12px',
-                        lineHeight: 1.8,
-                        color: '#333',
-                        marginBottom: '16px',
+                <div style={{
+                    fontSize: '13px',
+                    color: '#333',
+                    margin: '12px 0 20px',
+                    lineHeight: 1.8,
+                }}>
+                    <p>您访问的页面不存在或已被移除。</p>
+                    <p style={{ color: '#999', fontSize: '11px' }}>
+                        可能原因：
+                        <br />• 链接已失效
+                        <br />• 页面正在维护中
+                        <br />• 该页面从未存在于本服务器
+                    </p>
+                    <p style={{
+                        color: '#888',
+                        fontSize: '10px',
+                        fontStyle: 'italic',
+                        marginTop: '16px',
+                        borderTop: '1px dashed #ddd',
+                        paddingTop: '12px',
                     }}>
-                        <p>请求的页面不存在于当前沙盒中。</p>
-                        <p style={{ color: '#808080', fontSize: '11px' }}>
-                            可能原因：
-                            <br />• 页面已被清道夫 (sweeper_daemon) 自动清理
-                            <br />• 该 URL 映射到 local_mind.db 中一个已损坏的索引条目
-                            <br />• 页面从未真正存在——它只是一个数据库占位符
-                        </p>
-                        <p style={{
-                            color: '#666',
-                            fontSize: '10px',
-                            fontStyle: 'italic',
-                            marginTop: '12px',
-                            borderTop: '1px dashed #ccc',
-                            paddingTop: '12px',
-                        }}>
-                            "这个网站中的许多页面只存在于索引中。"
-                            <br />——管理员备注，2001年
-                        </p>
-                    </div>
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                        <a href="#/" style={{
-                            padding: '6px 16px',
-                            background: '#c0c0c0',
-                            borderTop: '2px solid #fff',
-                            borderLeft: '2px solid #fff',
-                            borderRight: '2px solid #808080',
-                            borderBottom: '2px solid #808080',
-                            color: '#000',
-                            textDecoration: 'none',
-                            fontSize: '12px',
-                            fontFamily: '"SimSun", "宋体", Tahoma, sans-serif',
-                            boxShadow: '1px 1px 0 #000',
-                        }}>
-                            🖥️ 返回桌面
-                        </a>
-                        <a href="#/course" style={{
-                            padding: '6px 16px',
-                            background: '#c0c0c0',
-                            borderTop: '2px solid #fff',
-                            borderLeft: '2px solid #fff',
-                            borderRight: '2px solid #808080',
-                            borderBottom: '2px solid #808080',
-                            color: '#000',
-                            textDecoration: 'none',
-                            fontSize: '12px',
-                            fontFamily: '"SimSun", "宋体", Tahoma, sans-serif',
-                            boxShadow: '1px 1px 0 #000',
-                        }}>
-                            📖 课程主页
-                        </a>
-                    </div>
+                        "本站的一些页面只有索引记录。"
+                        <br />——网络中心备注，2001年
+                    </p>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                    <a href="#/" style={{
+                        padding: '5px 18px',
+                        background: '#c0c0c0',
+                        borderTop: '2px solid #fff',
+                        borderLeft: '2px solid #fff',
+                        borderRight: '2px solid #808080',
+                        borderBottom: '2px solid #808080',
+                        color: '#000',
+                        textDecoration: 'none',
+                        fontSize: '12px',
+                        fontFamily: '"SimSun", "宋体", Tahoma, sans-serif',
+                    }}>
+                        🏠 返回首页
+                    </a>
+                    <a href="#/course" style={{
+                        padding: '5px 18px',
+                        background: '#c0c0c0',
+                        borderTop: '2px solid #fff',
+                        borderLeft: '2px solid #fff',
+                        borderRight: '2px solid #808080',
+                        borderBottom: '2px solid #808080',
+                        color: '#000',
+                        textDecoration: 'none',
+                        fontSize: '12px',
+                        fontFamily: '"SimSun", "宋体", Tahoma, sans-serif',
+                    }}>
+                        📖 课程主页
+                    </a>
                 </div>
             </div>
         </div>

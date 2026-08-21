@@ -18,13 +18,13 @@ const CourseResources = () => {
                 `无法下载 "${resource.title}"。\n\nHTTP 403 - Forbidden\n\n该资源需要 SYSTEM 级别访问权限。当前用户权限不足。`);
         } else if (resource.status === 'forbidden') {
             window.showSystemDialog?.('error', '禁止访问',
-                `无法下载 "${resource.title}"。\n\n该文档包含底层数据库架构信息。\n\nlocal_mind.db 表结构:\n- table: participants (1 row, 26 aliases)\n- table: posts\n- table: sweeper_log\n\n访问此信息需要直接数据库查询权限。`);
+                `无法下载 "${resource.title}"。\n\nHTTP 403 - Forbidden\n\n该文档仅限系统管理人员访问。\n如需查阅，请联系网络与信息化办公室。`);
         } else if (resource.status === 'corrupted') {
             window.showSystemDialog?.('error', '文件已损坏',
                 `"${resource.title}" 无法读取。\n\n磁盘扇区错误。文件可能已被 sweeper_daemon 清理。`);
         } else {
             window.showSystemDialog?.('info', '下载失败',
-                `准备下载 "${resource.title}"...\n\n文件大小: ${resource.size}\n格式: ${resource.format}\n\n正在从 local_mind.db 检索二进制数据...\n\n错误: 数据库中该文件的 BLOB 数据块为空（NULL）。`);
+                `准备下载 "${resource.title}"...\n\n文件大小: ${resource.size}\n格式: ${resource.format}\n\n正在从服务器检索文件数据...\n\n错误: 服务器上未找到该文件对应的数据。\n\n(该文件可能已被移出资源目录。)`);
         }
     };
 
@@ -47,7 +47,7 @@ const CourseResources = () => {
             {/* 导航 + 面包屑 */}
             <div style={{ padding: '6px 20px', background: '#f0f0f0', borderBottom: '1px solid #ccc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div className="breadcrumbs" style={{ padding: 0 }}>
-                    <Link to="/">🖥️ 桌面</Link><span className="sep">›</span>
+                    <Link to="/">🏠 门户首页</Link><span className="sep">›</span>
                     <Link to="/course">编译原理</Link><span className="sep">›</span>
                     <strong>教学资源库</strong>
                 </div>
@@ -64,7 +64,7 @@ const CourseResources = () => {
             }}>
                 <button onClick={() => setCurrentPath(['root'])}>⬆ 上级目录</button>
                 <button onClick={() => window.showSystemDialog?.('info', '功能不可用', '搜索功能需要索引服务支持。索引服务 (searchd) 在上次数据库压缩时被意外终止。')}>🔍 搜索</button>
-                <button onClick={() => window.showSystemDialog?.('info', '视图模式', '当前视图：列表。\n\n其他视图模式（图标、详细信息、缩略图）需要显卡驱动支持。\n当前沙盒环境未安装显示驱动。')}>📋 查看</button>
+                <button onClick={() => window.showSystemDialog?.('info', '视图模式', '当前视图：列表。\n\n其他视图模式（图标、详细信息、缩略图）需要显卡驱动支持。\n当前系统环境未安装相关显示组件。')}>📋 查看</button>
             </div>
 
             {/* 地址栏 */}
@@ -81,7 +81,7 @@ const CourseResources = () => {
                 <input
                     type="text"
                     readOnly
-                    value={`D:\\sandbox\\local_mind.db\\resources\\${currentPath.join('\\')}`}
+                    value={`D:\\campus_web\\resources\\${currentPath.join('\\')}`}
                     style={{ flex: 1, fontSize: '11px' }}
                 />
                 <span style={{ color: '#808080', fontFamily: 'Courier New, monospace', fontSize: '10px' }}>
@@ -208,6 +208,30 @@ const CourseResources = () => {
                         <span style={{ width: '60px', textAlign: 'center', fontSize: '10px', color: '#008000' }}>完整</span>
                     </div>
 
+                    <div
+                        style={{
+                            padding: '6px 12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            borderBottom: '1px dotted #d0d0d0',
+                            cursor: 'pointer',
+                            background: '#fff8e8',
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = '#fff0d0'}
+                        onMouseLeave={e => e.currentTarget.style.background = '#fff8e8'}
+                        onClick={() => window.location.hash = '#/archives/1992-sliding-window-paper'}
+                    >
+                        <span style={{ width: '30px', fontSize: '16px' }}>📜</span>
+                        <span style={{ flex: 1 }}>1992_滑动窗式远期记忆渐进性缺失综合征_病例报告.pdf</span>
+                        <span style={{ width: '100px', fontSize: '11px' }}>
+                            <span style={{ background: '#ffe0e0', padding: '1px 6px', border: '1px solid #cc0000', fontSize: '10px' }}>档案</span>
+                        </span>
+                        <span style={{ width: '90px', color: '#666', fontSize: '11px' }}>2.4MB</span>
+                        <span style={{ width: '140px', color: '#666', fontSize: '11px' }}>1992-03-??</span>
+                        <span style={{ width: '60px', textAlign: 'center', fontSize: '10px', color: '#cc8800' }}>⚠ 残缺</span>
+                    </div>
+
                     {/* 文件 */}
                     {allResources.map((r, idx) => (
                         <div
@@ -282,6 +306,10 @@ const CourseResources = () => {
                                                 href="#"
                                                 onClick={(e) => {
                                                     e.preventDefault();
+                                                    if (f.id === '1992_01') {
+                                                        window.location.hash = '#/archives/1992-sliding-window-paper';
+                                                        return;
+                                                    }
                                                     if (f.status === 'corrupted') {
                                                         window.showSystemDialog?.('error', '文件损坏', `"${f.name}" 无法打开。文件头校验失败。`);
                                                     } else if (f.status === 'locked') {
@@ -289,7 +317,7 @@ const CourseResources = () => {
                                                     } else if (f.status === 'hidden') {
                                                         window.showSystemDialog?.('warn', '隐藏文件', `"${f.name}" 是一个隐藏的配置文件。\n\n内容预览：\n[boot]\nsandbox_mode=true\nmax_participants=26\nsingle_user_mode=enforced\n\n[network]\nbind_address=210.28.128.4\nallow_external=false\n\n[experiment]\nname=Theseus_Protocol\nduration=indefinite\n termination_condition=none`);
                                                     } else {
-                                                        window.showSystemDialog?.('info', '存档文件', `"${f.name}"\n\n${f.size} | ${f.type}\n\n这是一个历史存档文件。文件内容自${selectedFile.year}年以来未被修改。\n\n注意：所有存档文件存储在 local_mind.db 的 archive 分区中。该分区与论坛帖子表共享物理存储空间。`);
+                                                        window.showSystemDialog?.('info', '存档文件', `"${f.name}"\n\n${f.size} | ${f.type}\n\n这是一个历史存档文件。文件内容自${selectedFile.year}年以来未被修改。\n\n注意：所有存档文件存储于校园网档案目录中，与课程文件共用同一存储分区。`);
                                                     }
                                                 }}
                                             >
@@ -321,8 +349,8 @@ const CourseResources = () => {
                     color: '#666',
                 }}>
                     <strong>📌 资源库说明：</strong>
-                    本资源库中的所有文件索引存储在 local_mind.db 数据库中。
-                    由于该数据库运行在 Append-Only 模式下，部分文件可能只存在索引而无实际数据。
+                    本资源库的文件索引存储于校园网档案服务器中。
+                    部分历史文件仅有索引记录，实际数据可能尚未上传，或已随服务器迁移而丢失。
                 </div>
             </main>
 

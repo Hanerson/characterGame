@@ -25,9 +25,22 @@ const SystemLogs = () => {
             output.push({ type: 'dim', text: '  users    - 查看在线用户' });
             output.push({ type: 'dim', text: '  db       - 查看数据库信息' });
             output.push({ type: 'dim', text: '  whoami   - 查看当前用户' });
+            output.push({ type: 'dim', text: '  timeline - 查看系统关键事件时间线' });
             output.push({ type: 'dim', text: '  leaks    - 查看数据泄漏 (需谨慎使用)' });
             output.push({ type: 'dim', text: '  exit     - 退出控制台' });
             output.push({ type: 'dim', text: '  format   - 格式化数据库 [需要确认]' });
+        } else if (cmdLower === 'timeline') {
+            output.push({ type: 'info', text: '系统关键事件时间线:' });
+            output.push({ type: 'dim', text: '  2001-11-01  系统启动，PID 1 (Anonymous_01) 诞生' });
+            output.push({ type: 'dim', text: '  2003-08-15  PID 1 最后一次活跃' });
+            output.push({ type: 'dim', text: '  2006-07-11  PID 6 语言崩溃事件 (失语症)' });
+            output.push({ type: 'dim', text: '  2008-08-25  PID 9 尝试访问其他进程内存 (被拦截)' });
+            output.push({ type: 'dim', text: '  2013-05-20  PID 14 发现共享 IP (门锁启用)' });
+            output.push({ type: 'dim', text: '  2019-04-30  PID 21 自我抄袭悖论' });
+            output.push({ type: 'dim', text: '  2025-12-01  PID 25 尝试格式化数据库 (被拒)' });
+            output.push({ type: 'dim', text: '  2026-06-10  PID 26 连接丢失，实验状态 UNKNOWN' });
+            output.push({ type: 'dim', text: '  2026-07-06  归档模式激活，检测到新的外部访问会话' });
+            output.push({ type: 'warn', text: '  > 会话编号: 27 (自归档模式激活以来的外部访问)' });
         } else if (cmdLower === 'status') {
             output.push({ type: 'info', text: '系统状态报告:' });
             output.push({ type: 'dim', text: '  运行时间: 9023 天 0 小时 0 分 0 秒' });
@@ -119,7 +132,7 @@ const SystemLogs = () => {
             }}>
                 <span>📋 系统诊断控制台 — local_mind Diagnostic Console v0.1</span>
                 <Link to="/" style={{ color: '#c0d0ff', fontSize: '11px', textDecoration: 'none' }}>
-                    ← 返回桌面
+                    ← 返回门户首页
                 </Link>
             </div>
 
@@ -188,10 +201,13 @@ const SystemLogs = () => {
                             === 显示 {filteredLogs.length} / {systemLogs.length} 条日志 ===
                         </div>
                         {filteredLogs.map(log => (
-                            <div key={log.id} style={{
-                                padding: '6px 0',
-                                borderBottom: '1px dotted #1a1a1a',
-                            }}>
+                            <div
+                                key={log.id}
+                                style={{
+                                    padding: '6px 0',
+                                    borderBottom: '1px dotted #1a1a1a',
+                                }}
+                            >
                                 <span style={{ color: '#888' }}>[{log.timestamp}]</span>{' '}
                                 <span style={{
                                     color: log.level === 'FATAL' ? '#ff0000'

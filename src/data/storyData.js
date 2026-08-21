@@ -107,6 +107,41 @@ export const systemLogs = [
         source: "system/kernel",
         message: "Archive mode active. Serving read-only snapshot to external visitor. Visitor IP: [REDACTED]. Welcome, observer.",
     },
+    {
+        id: "log_016",
+        timestamp: "2004-03-18 12:00:00",
+        level: "INFO",
+        source: "analysis/nlp",
+        message: "MAINTENANCE: Full-corpus syntax-tree diff completed. All 26 alias accounts: normalized edit distance < 0.4%. Baseline drift consistent with single-origin hypothesis. Report filed under /dev/null/REPORT_2004_03. Do not surface to participants.",
+    },
+    {
+        id: "log_017",
+        timestamp: "2009-10-05 19:45:00",
+        level: "WARN",
+        source: "security/firewall",
+        message: "ALERT: PID 15 attempted to open outbound socket to 210.28.128.4:80. This address is the local loopback. All outbound traffic is remapped to loopback. Participant cannot leave the network. This is by design. Logging suppressed (level: participant awareness risk).",
+    },
+    {
+        id: "log_018",
+        timestamp: "2014-02-28 03:15:00",
+        level: "CRITICAL",
+        source: "medical/monitor",
+        message: "EMERGENCY: PID 16 memory fragmentation critical (97.2%). Long-term storage reclamation rate exceeding allocation rate. Sweeper intervention requested: mark 12 fragments as unreachable to prevent cascade failure. Patient vitals: stable. Continue protocol.",
+    },
+    {
+        id: "log_019",
+        timestamp: "2018-06-18 23:59:59",
+        level: "FATAL",
+        source: "system/kernel",
+        message: "PROTOCOL CHECKPOINT: All 26 alias slots exhausted. No new identities available. Patient language function at 6% baseline. Remaining output capacity: single keystrokes, punctuation. Proposal: initiate observer session (27th slot) with read-only archive access. Awaiting authorization from [NO AUTHORITY FOUND]. Proceeding with auto-archive.",
+    },
+    {
+        id: "log_020",
+        timestamp: "2026-06-10 14:30:26",
+        level: "INFO",
+        source: "system/kernel",
+        message: "POST-MORTEM: PID 26 final buffer decrypted. Content: 0x2E ('.') followed by null. 26 keystrokes total in final week. Each keystroke logged with timestamp. All prior keystroke records show identical inter-keystroke latency distribution. Confirms: single operator, 26 sessions, 25 years, one origin.",
+    },
 ];
 
 // === 元数据片段 ===

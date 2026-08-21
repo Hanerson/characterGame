@@ -28,7 +28,7 @@ const FacultyPage = () => {
 
             <div style={{ padding: '6px 20px', background: '#f0f0f0', borderBottom: '1px solid #ccc', display: 'flex', justifyContent: 'space-between' }}>
                 <div className="breadcrumbs" style={{ padding: 0 }}>
-                    <Link to="/">🖥️ 桌面</Link><span className="sep">›</span>
+                    <Link to="/">🏠 门户首页</Link><span className="sep">›</span>
                     <Link to="/course">编译原理</Link><span className="sep">›</span>
                     <strong>师资队伍</strong>
                 </div>
@@ -133,8 +133,15 @@ const FacultyPage = () => {
                                                     padding: '6px',
                                                     background: '#fff0f0',
                                                     border: '1px dashed #cc0000',
-                                                }}>
+                                                    cursor: 'pointer',
+                                                }}
+                                                    onClick={() => {
+                                                        window.showSystemDialog?.('warn', '目击记录',
+                                                            `${prof.lastSeen}\n\n——这段记录被归档为"未经证实"。\n\n2008年的深夜机房没有监控摄像头。\n那个坐在终端前的人，脸被屏幕光照亮。\n他正在运行一个只有本地地址的论坛程序。\n\n画面里的那个人——\n如果你相信这份记录——\n他在2001年就已经离职了。`);
+                                                    }}
+                                                    title="点击查看目击记录详情">
                                                     ⚠️ {prof.lastSeen}
+                                                    <span style={{ fontSize: '10px', opacity: 0.7 }}> 🔍</span>
                                                 </p>
                                             )}
                                             {prof.id === 'p002' && (
@@ -146,7 +153,7 @@ const FacultyPage = () => {
                                                         <li>1970年出生</li>
                                                         <li>1995年加入至诚大学计算机学院</li>
                                                         <li>1998年提出"将编译器原理应用于认知模型"的研究方向</li>
-                                                        <li>2000年获得"沙盒认知实验"伦理审批</li>
+                                                        <li>2000年获得"认知架构实验"伦理审批</li>
                                                         <li>2001年11月1日——在课程论坛 v1.0 部署完成当日——宣布离职</li>
                                                         <li>2001年12月20日——最后一次出现在教工会议上</li>
                                                         <li style={{ color: '#cc0000' }}>
@@ -220,7 +227,7 @@ const FacultyPage = () => {
             </main>
 
             <footer className="copyright-bar">
-                <span style={{ color: '#808080' }}>页面生成时间: {new Date().toISOString().replace('T', ' ').slice(0, 19)} | 数据来源: local_mind.db::faculty 视图</span>
+                <span style={{ color: '#808080' }}>页面生成时间: {new Date().toISOString().replace('T', ' ').slice(0, 19)} | 数据来源: 人事处 · 教师档案</span>
             </footer>
         </div>
     );

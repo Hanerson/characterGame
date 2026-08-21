@@ -53,6 +53,10 @@ export const archiveData = {
         { id: "2001_02", name: "【存档】编译器底层指令集映射逻辑.doc", type: "DOC", size: "2.1MB", status: "normal" },
         { id: "2001_03", name: "experiment_proposal_draft.txt", type: "TXT", size: "15KB", status: "locked" },
     ],
+    1992: [
+        { id: "1992_01", name: "滑动窗式远期记忆渐进性缺失综合征_病例报告.pdf", type: "PDF", size: "2.4MB", status: "corrupted" },
+        { id: "1992_02", name: "1992_随访记录_附注.txt", type: "TXT", size: "8KB", status: "hidden" },
+    ],
 };
 
 // 课程主页相关数据
